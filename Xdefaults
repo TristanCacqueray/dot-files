@@ -1,0 +1,31 @@
+xterm*foreground: white
+xterm*background: black
+xterm*saveLines: 65535
+xterm*charClass: 33:48,35:48,37:48,42:48,45-47:48,64:48,95:48,126:48,58:48,43:48,38:48
+xterm*vt100*geometry: 80x33
+xterm*utf8: 2
+xterm*utf8Fonts: 2
+xterm*utf8Latin1: 1
+xterm*utf8Title: 1
+
+URxvt.foreground: white
+URxvt.saveLines: 65535
+URxvt.background: rgba:0000/0000/0000/cccc
+URxvt.borderColor: rgba:0000/0000/0000/cccc
+URxvt.depth: 32
+URxvt.internalBorder: 0
+URxvt.externalBorder: 2
+URxvt.scrollBar: false
+
+xclock*background:   black
+xclock*foreground:   #BEF781
+xclock*hourColor:    #BEF781
+xclock*minuteColor:  #BEF781
+#xclock*secondColor: #F8E0F7
+xclock*majorColor:   #F8E0F7
+xclock*minorColor:   #8181F7
+
+gnuplot*background:  black
+gnuplot*textColor:   white
+gnuplot*borderColor: gray50
+gnuplot*axisColor:   gray50

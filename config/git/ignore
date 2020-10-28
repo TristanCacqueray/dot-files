@@ -1,0 +1,72 @@
+# general files
+*~
+*.swp
+\#*\#
+*.log
+*.a
+*.o
+_build/
+.coverage
+
+# haskell
+dist
+dist-*
+cabal-dev
+*.hi
+*.hie
+*.chi
+*.chs.h
+*.dyn_o
+*.dyn_hi
+.cabal-sandbox/
+cabal.sandbox.config
+*.prof
+*.aux
+*.hp
+*.eventlog
+.stack-work/
+cabal.project.local
+.ghc.environment.*
+
+# emacs
+*.elc
+*-autoloads.el
+
+# nix
+result
+.envrc
+
+# ocaml
+*.annot
+*.cmo
+*.cma
+*.cmi
+*.cmx
+*.cmxs
+*.cmxa
+*.byte
+*.native
+.merlin
+*.install
+_opam/
+
+# erlang
+.eunit
+*.o
+*.beam
+*.plt
+.rebar3
+_checkouts/
+
+# node
+node_modules/
+web_modules/
+
+# python
+.pytest_cache
+.mypy_cache
+.venv
+.tox
+__pycache__
+.eggs
+*.egg-info
