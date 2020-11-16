@@ -28,6 +28,12 @@ cabal.sandbox.config
 cabal.project.local
 .ghc.environment.*
 
+# purescript
+.purs-repl
+.spago
+/output/
+/.cache/
+
 # emacs
 *.elc
 *-autoloads.el
