@@ -8,6 +8,8 @@
  user-mail-address "tdecacqu@redhat.com"
  mime-edit-pgp-signers '("EB103DE8B5E69E631C6FF17922B9A05C925CC5D8"))
 
+(setenv "EDITOR" "emacsclient")
+
 ;; improve vt rendering
 (when (string-equal (getenv "TERM") "xterm-256color")
   (set-background-color "black"))
