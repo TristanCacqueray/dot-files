@@ -114,10 +114,15 @@
   )
 
 ;; a git clone helper
+(defun parse-git-url (url)
+  (url-generic-parse-url url))
+
 (defun giturl-to-dir (url)
   "Convert a git URL to a local path."
   (let ((home (getenv "HOME"))
-        (inf (url-generic-parse-url url)))
+        (inf (parse-git-url url)))
+    (when (null (url-host inf))
+      (error "Invalid url: %s" url))
     (concat
      home "/src/" (url-host inf)
      (replace-regexp-in-string
