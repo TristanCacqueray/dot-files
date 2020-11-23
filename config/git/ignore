@@ -64,6 +64,10 @@ _opam/
 .rebar3
 _checkouts/
 
+# reason
+/lib/bs
+*.bs.js
+
 # node
 node_modules/
 web_modules/
