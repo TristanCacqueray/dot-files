@@ -6,6 +6,7 @@ let
     withHaskell = true;
     withPurescript = true;
     withNix = true;
+    withElixir = true;
     withX = withX;
     withReason = true;
     withLsp = true;
