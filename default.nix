@@ -5,6 +5,8 @@ let
     withEmacs = true;
     withHaskell = true;
     withPurescript = true;
+    withAts = true;
+    withDarcs = true;
     withNix = true;
     withElixir = true;
     withX = withX;
