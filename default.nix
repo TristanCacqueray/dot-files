@@ -15,6 +15,7 @@ let
     withPython = true;
     withRpm = true;
     withDhall = true;
+    withW3M = true;
     withNixGLIntel = withX;
     withNeuron = true;
   };
