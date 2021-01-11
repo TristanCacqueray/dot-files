@@ -20,6 +20,36 @@
 ;; disable eletric indent
 (electric-indent-mode -1)
 
+;; enable quality of life ghc extensions
+(setq haskell-language-extensions (list
+                                   "-XBangPatterns"
+                                   "-XBinaryLiterals"
+                                   "-XDataKinds"
+                                   "-XDeriveGeneric"
+                                   "-XDerivingStrategies"
+                                   "-XExplicitForAll"
+                                   "-XFlexibleInstances"
+                                   "-XGeneralizedNewtypeDeriving"
+                                   "-XHexFloatLiterals"
+                                   "-XImportQualifiedPost"
+                                   "-XLambdaCase"
+                                   "-XMultiWayIf"
+                                   "-XNamedFieldPuns"
+                                   "-XNamedWildCards"
+                                   "-XNumDecimals"
+                                   "-XNumericUnderscores"
+                                   "-XOverloadedLists"
+                                   "-XOverloadedStrings"
+                                   "-XPostfixOperators"
+                                   "-XRecordWildCards"
+                                   "-XScopedTypeVariables"
+                                   "-XStandaloneDeriving"
+                                   "-XTupleSections"
+                                   "-XTypeOperators"
+                                   ))
+(setq flycheck-ghc-args haskell-language-extensions)
+
+
 ;; Start magit-status when switching project
 (require 'projectile)
 (setq-default
