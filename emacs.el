@@ -10,6 +10,9 @@
 
 (setenv "EDITOR" "emacsclient")
 
+;; M-l insert lambda
+(global-set-key  (kbd "M-l") (lambda () (interactive) (insert "λ")))
+
 ;; improve vt rendering
 (when (string-equal (getenv "TERM") "xterm-256color")
   (set-background-color "black"))
