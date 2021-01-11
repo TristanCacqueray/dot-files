@@ -16,7 +16,8 @@ let
     withRpm = true;
     withDhall = true;
     withW3M = true;
-    withNixGLIntel = withX;
+    withIntel = withX;
+    withVulkan = withX;
     withNeuron = true;
   };
   # TODO: add module custom env to devenv and move this to !withX
