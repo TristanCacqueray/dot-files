@@ -15,6 +15,8 @@ let
     withPython = true;
     withRpm = true;
     withDhall = true;
+    withHy = true;
+    withRacket = true;
     withW3M = true;
     withIntel = withX;
     withVulkan = withX;
