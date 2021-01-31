@@ -20,7 +20,9 @@ let
     withW3M = true;
     withIntel = withX;
     withVulkan = withX;
+    withOpenGL = withX;
     withNeuron = true;
+    withGLSL = true;
   };
   # TODO: add module custom env to devenv and move this to !withX
   custom-env = (if withX then
