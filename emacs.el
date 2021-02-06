@@ -96,13 +96,13 @@
   (start-nix-worker-process (project-id "hoogle") "hoogle server -p 8080 --local --haskell"))
 
 ;; reason helper
-(defun yarn-start ()
+(defun pnpm-start ()
   (interactive)
-  (start-worker-process (project-id "yarn-start") "yarn" "start"))
+  (start-worker-process (project-id "pnpm-start") "pnpm" "run" "start"))
 
-(defun yarn-serve ()
+(defun pnpm-serve ()
   (interactive)
-  (start-worker-process (project-id "yarn-serve") "sh" "-c" "yarn build && yarn serve"))
+  (start-worker-process (project-id "pnpm-serve") "sh" "-c" "pnpm run build && pnpm run serve"))
 
 ;; reason lsp configuration
 (when (and (require 'lsp-mode nil t) (require 'reason-mode nil t))
