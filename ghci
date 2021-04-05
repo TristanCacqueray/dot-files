@@ -3,3 +3,5 @@
 :def doc \s -> return $ ":! hoogle search -l --info \"" ++ s ++ "\""
 :set prompt "λ> "
 :set -XBangPatterns -XBinaryLiterals -XDataKinds -XDeriveGeneric -XDerivingStrategies -XExplicitForAll -XFlexibleInstances -XGeneralizedNewtypeDeriving -XHexFloatLiterals -XImportQualifiedPost -XLambdaCase -XMultiWayIf -XNamedFieldPuns -XNamedWildCards -XNumDecimals -XNumericUnderscores -XOverloadedLists -XOverloadedStrings -XPostfixOperators -XRecordWildCards -XScopedTypeVariables -XStandaloneDeriving -XTupleSections -XTypeOperators
+:def pretty \_ -> return (":set -interactive-print=Text.Pretty.Simple.pPrint")
+:def no-pretty \_ -> return (":set -interactive-print System.IO.print")
