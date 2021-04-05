@@ -184,5 +184,10 @@
   (interactive)
   (message (buffer-file-name)))
 
+(defun make-pull-request-against-my-fork ()
+  (interactive)
+  (message "Forking output %s" (process-lines "hub" "fork"))
+  (mpr-make-pull-request "origin" "TristanCacqueray" "main" t))
+
 (provide 'init)
 ;;; emacs ends here
