@@ -189,5 +189,13 @@
   (message "Forking output %s" (process-lines "hub" "fork"))
   (mpr-make-pull-request "origin" "TristanCacqueray" "main" t))
 
+(defun remove-window-decoration ()
+  (interactive)
+  (let ((frame-name (frame-parameter (selected-frame) 'name)))
+    (call-process-shell-command (concat
+                                 "xprop -name \""
+                                 frame-name
+                                 "\" -f _MOTIF_WM_HINTS 32c -set _MOTIF_WM_HINTS '0x2, 0x0, 0x0, 0x0, 0x0'"))))
+
 (provide 'init)
 ;;; emacs ends here

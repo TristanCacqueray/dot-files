@@ -3,6 +3,8 @@ let
   nixpkgs = import ~/src/github.com/podenv/devenv/nixpkgs.nix;
   devenv = import ~/src/github.com/podenv/devenv/default.nix {
     withEmacs = true;
+    withTools = true;
+    withShake = true;
     withHaskell = true;
     withPurescript = true;
     withAts = true;

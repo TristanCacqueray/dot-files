@@ -1,0 +1,120 @@
+bell:
+  animation: EaseOutExpo
+  color: "#ffffff"
+  duration: 0
+colors:
+  bright:
+    black: "0x002b36"
+    blue: "0x839496"
+    cyan: "0x93a1a1"
+    green: "0x586e75"
+    magenta: "0x6c71c4"
+    red: "0xcb4b16"
+    white: "0xfdf6e3"
+    yellow: "0x657b83"
+  cursor:
+    cursor: "#ffffff"
+    text: "#000000"
+  dim:
+    black: "#000000"
+    blue: "#506d8f"
+    cyan: "#497e7a"
+    green: "#7a8530"
+    magenta: "#80638e"
+    red: "#8c3336"
+    white: "#9a9a9a"
+    yellow: "#97822e"
+  indexed_colors: []
+  normal:
+    black: "0x073642"
+    blue: "0x268bd2"
+    cyan: "0x2aa198"
+    green: "0x859900"
+    magenta: "0xd33682"
+    red: "0xdc322f"
+    white: "0xeee8d5"
+    yellow: "0xb58900"
+  primary:
+    background: "0xfdf6e3"
+    foreground: "0x586e75"
+  selection:
+    background: "#404040"
+    text: "#eaeaea"
+  vi_mode_cursor:
+    cursor: "#ffffff"
+    text: "#000000"
+cursor:
+  style: Block
+  thickness: 0.15
+  unfocused_hollow: true
+  vi_mode_style: None
+debug:
+  log_level: Warn
+  persistent_logging: false
+  print_events: false
+  ref_test: false
+  render_timer: false
+draw_bold_text_with_bright_colors: false
+env:
+  TERM: xterm-256color
+font:
+  bold:
+    family: monospace
+    style: Bold
+  bold_italic:
+    family: monospace
+    style: Italic
+  glyph_offset:
+    x: 0
+    y: 0
+  italic:
+    family: monospace
+    style: Italic
+  normal:
+    family: monospace
+    style: Regular
+  offset:
+    x: 0
+    y: 0
+  size: 11
+key_bindings: []
+live_config_reload: false
+mouse:
+  double_click:
+    threshold: 300
+  hide_when_typing: false
+  triple_click:
+    threshold: 300
+  url:
+    launcher:
+      args: []
+      program: xdg-open
+    modifiers: None
+mouse_bindings: []
+opacity:
+  background_opacity: 1
+scrolling:
+  history: 65536
+  multiplier: 3
+selection:
+  save_to_clipboard: false
+  semantic_escape_chars: "',│`|:\"' ()[]{}<>"
+window:
+  class:
+    general: Alacritty
+    instance: Alacritty
+  decorations: none
+  dimensions:
+    columns: 80
+    lines: 24
+  dynamic_padding: false
+  dynamic_title: true
+  gtk_theme_variant: None
+  padding:
+    x: 0
+    y: 0
+  position:
+    x: 0
+    y: 0
+  startup_mode: Windowed
+  title: Alacritty
