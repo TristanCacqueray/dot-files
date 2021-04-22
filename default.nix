@@ -26,6 +26,9 @@ let
     withNeuron = true;
     withGLSL = true;
     withGo = true;
+    withProtobuf = true;
+    withThrift = true;
+    withTypescript = true;
   };
   # TODO: add module custom env to devenv and move this to !withX
   custom-env = (if withX then
