@@ -29,6 +29,9 @@ let
     withProtobuf = true;
     withThrift = true;
     withTypescript = true;
+    withPlantuml = true;
+    withNotMuch = withX;
+    withOrg = true;
   };
   # TODO: add module custom env to devenv and move this to !withX
   custom-env = (if withX then

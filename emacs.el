@@ -10,6 +10,8 @@
 
 (setenv "EDITOR" "emacsclient")
 
+(setq org-replace-disputed-keys t)
+
 ;; M-l insert lambda
 (global-set-key  (kbd "M-l") (lambda () (interactive) (insert "λ")))
 
