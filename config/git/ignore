@@ -82,6 +82,7 @@ web_modules/
 __pycache__
 .eggs
 *.egg-info
+*.pyc
 
 # neuron
 .neuron
