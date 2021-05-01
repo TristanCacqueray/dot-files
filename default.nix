@@ -32,6 +32,7 @@ let
     withPlantuml = true;
     withNotMuch = withX;
     withOrg = true;
+    withRest = true;
   };
   # TODO: add module custom env to devenv and move this to !withX
   custom-env = (if withX then
