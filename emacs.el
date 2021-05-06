@@ -6,10 +6,12 @@
 (setq-default
  user-full-name "Tristan Cacqueray"
  user-mail-address "tdecacqu@redhat.com"
- mime-edit-pgp-signers '("EB103DE8B5E69E631C6FF17922B9A05C925CC5D8"))
+ mime-edit-pgp-signers '("EB103DE8B5E69E631C6FF17922B9A05C925CC5D8")
+ auth-sources '("~/.authinfo.gpg"))
 
 (setenv "EDITOR" "emacsclient")
 
+;; should make windmove key work in org-mode
 (setq org-replace-disputed-keys t)
 
 ;; M-l insert lambda
@@ -40,7 +42,6 @@
                                    "-XNamedWildCards"
                                    "-XNumDecimals"
                                    "-XNumericUnderscores"
-                                   "-XOverloadedLists"
                                    "-XOverloadedStrings"
                                    "-XPostfixOperators"
                                    "-XRecordWildCards"
@@ -117,6 +118,7 @@
                       :server-id 'reason-ls))
     (add-hook 'reason-mode-hook 'lsp-mode)
     ))
+
 ;; better comint
 (defun turn-on-comint-history ()
   (let ((process (get-buffer-process (current-buffer))))
@@ -161,9 +163,11 @@
     (concat
      home "/src/" (url-host inf)
      (replace-regexp-in-string
-      "/r/" "/"
+      " " ""
       (replace-regexp-in-string
-       ".git$" "" (url-filename inf))))))
+       "/r/" "/"
+       (replace-regexp-in-string
+        ".git$" "" (url-filename inf)))))))
 
 (defun git-clone-url (url dir)
   (message "clonning %s to %s" url dir)
@@ -179,17 +183,13 @@
   (let ((d (giturl-to-dir url)))
     (unless (f-git? d)
       (git-clone-url url d))
+    ;; todo: check if clone process succeeded
     (dired d)))
 
 (defun show-file-name ()
   "Show the full path file name in the minibuffer."
   (interactive)
   (message (buffer-file-name)))
-
-(defun make-pull-request-against-my-fork ()
-  (interactive)
-  (message "Forking output %s" (process-lines "hub" "fork"))
-  (mpr-make-pull-request "origin" "TristanCacqueray" "main" t))
 
 (defun remove-window-decoration ()
   (interactive)
@@ -199,9 +199,6 @@
                                  frame-name
                                  "\" -f _MOTIF_WM_HINTS 32c -set _MOTIF_WM_HINTS '0x2, 0x0, 0x0, 0x0, 0x0'"))))
 
-(winner-mode)
-
-(setq auth-sources '("~/.authinfo.gpg"))
 
 (provide 'init)
 ;;; emacs ends here
