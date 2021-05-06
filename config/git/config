@@ -3,3 +3,5 @@
   email = tdecacqu@redhat.com
 [gitreview]
   username = TristanCacqueray
+[github]
+  user = TristanCacqueray

@@ -201,5 +201,7 @@
 
 (winner-mode)
 
+(setq auth-sources '("~/.authinfo.gpg"))
+
 (provide 'init)
 ;;; emacs ends here
