@@ -200,5 +200,7 @@
                                  "\" -f _MOTIF_WM_HINTS 32c -set _MOTIF_WM_HINTS '0x2, 0x0, 0x0, 0x0, 0x0'"))))
 
 
+(require 'mynotmuch (concat (getenv "HOME") "/.emacs.d/mynotmuch.el") t)
+
 (provide 'init)
 ;;; emacs ends here
