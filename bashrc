@@ -16,6 +16,7 @@ fi
 export PATH
 alias ls='ls -ap --color=auto'
 alias ctop='systemd-cgtop -c --cpu=time -1 --depth=10 -k'
+alias journalctlf='script -fq /dev/null -c "journalctl --no-hostname -f"  | grep -v syscall=179'
 
 # https://vrom911.github.io/blog/haskell-aliases
 alias cbuild="cabal build --enable-tests --enable-benchmarks --write-ghc-environment-files=always -O0"
