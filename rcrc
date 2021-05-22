@@ -1,2 +1,2 @@
-EXCLUDES="README.md Makefile *.dhall"
+EXCLUDES="README.md Makefile alacritty.dhall"
 UNDOTTED="default.nix"
