@@ -24,6 +24,7 @@ let env =
         , dri = Some True
         , pipewire = Some True
         , pulseaudio = Some True
+        , gpg = Some True
         }
       }
 
