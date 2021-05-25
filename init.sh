@@ -69,8 +69,15 @@ function gnome {
     for i in $(seq 1 9); do gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-${i} "['<Super><Shift>${i}']"; done
     for i in $(seq 1 9); do gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-${i} "['<Super>${i}']"; done
 
+    log "Setup awesome key bindings"
+    gsettings set org.gnome.desktop.wm.keybindings cycle-windows "['<Super>Tab']"
+    gsettings set org.gnome.desktop.wm.keybindings cycle-windows-backward "['<Shift><Super>Tab']"
+
     log "Disable sleep"
     gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-timeout 0
+
+    log "Disable bell"
+    gsettings set org.gnome.desktop.wm.preferences audible-bell false
 }
 
 podenv
