@@ -6,6 +6,7 @@ let
     withTools = true;
     withShake = true;
     withHaskell = true;
+    withRust = true;
     withPurescript = true;
     withAts = true;
     withDarcs = true;
