@@ -1,5 +1,5 @@
 let Alacritty =
-      ~/git/github.com/cideM/dhall-alacritty/linux.dhall sha256:f6557ab972f0c1814f2ca07cb597a85cbf1ead510ecc59cc5ea37729a6b91407
+      https://raw.githubusercontent.com/TristanCacqueray/dhall-alacritty/master/linux.dhall sha256:3da59e7be91d0bce778d6d65c387ea26c71ddb51c11feddfaae2e3c845151c74
 
 let Solarized =
       { Light = Alacritty.Colors.Schema::{
@@ -23,11 +23,9 @@ let Solarized =
           , white = "0xeee8d5"
           , yellow = "0xb58900"
           }
-        , primary =
-          { background = "0xfdf6e3"
+        , primary = Alacritty.Colors.Primary::{
+          , background = "0xfdf6e3"
           , foreground = "0x586e75"
-          , dim_foreground = None Text
-          , dim_background = None Text
           }
         }
       , Dark = Alacritty.Colors.Schema::{
@@ -51,11 +49,9 @@ let Solarized =
           , white = "0xeee8d5"
           , yellow = "0xb58900"
           }
-        , primary =
-          { background = "0x002b36"
+        , primary = Alacritty.Colors.Primary::{
+          , background = "0x002b36"
           , foreground = "0x839496"
-          , dim_foreground = None Text
-          , dim_background = None Text
           }
         }
       }
@@ -93,11 +89,9 @@ let Dracula =
         , white = "0xbfbfbf"
         , yellow = "0xf1fa8c"
         }
-      , primary =
-        { background = "0x282a36"
+      , primary = Alacritty.Colors.Primary::{
+        , background = "0x282a36"
         , foreground = "0xf8f8f2"
-        , dim_foreground = None Text
-        , dim_background = None Text
         }
       , selection = Some { background = "0x44475a", text = "CellForeground" }
       , vi_mode_cursor = Some
@@ -126,11 +120,9 @@ let Xterm =
         , white = "0xe5e5e5"
         , yellow = "0xcdcd00"
         }
-      , primary =
-        { background = "0x000000"
+      , primary = Alacritty.Colors.Primary::{
+        , background = "0x000000"
         , foreground = "0xffffff"
-        , dim_foreground = None Text
-        , dim_background = None Text
         }
       }
 
