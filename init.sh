@@ -78,6 +78,9 @@ function gnome {
 
     log "Disable bell"
     gsettings set org.gnome.desktop.wm.preferences audible-bell false
+
+    log "Replace caps-lock with control"
+    gsettings set org.gnome.desktop.input-sources xkb-options "['caps:ctrl_modifier']"
 }
 
 podenv
