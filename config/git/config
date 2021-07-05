@@ -7,3 +7,5 @@
   user = TristanCacqueray
 [init]
   defaultBranch = main
+[gitlab]
+  user = TristanCacqueray
