@@ -59,6 +59,12 @@
  projectile-switch-project-action (quote magit-status))
 (global-set-key (kbd "<f5>") (quote projectile-compile-project))
 
+;; Ace navigation
+(global-set-key (kbd "M-o") 'ace-window)
+(global-set-key (kbd "M-g l") 'avy-goto-line)
+(global-set-key (kbd "M-g w") 'avy-goto-word-1)
+(global-set-key (kbd "M-g e") 'avy-goto-word-0)
+
 ;; Start a process in a buffer with ansi colors
 (defun start-worker-process (name program &rest args)
   (let ((buffer-name (concat "*" name "*")))

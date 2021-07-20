@@ -1,3 +1,4 @@
+import Prelude
 :set -fno-warn-missing-signatures
 :def hoogle \s -> return $ ":! hoogle search -l --count=15 \"" ++ s ++ "\""
 :def doc \s -> return $ ":! hoogle search -l --info \"" ++ s ++ "\""
