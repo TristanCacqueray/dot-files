@@ -17,6 +17,9 @@
 ;; M-l insert lambda
 (global-set-key  (kbd "M-l") (lambda () (interactive) (insert "λ")))
 
+;; Unbind C-t for tmux
+(global-unset-key (kbd "C-t"))
+
 ;; improve vt rendering
 (when (string-equal (getenv "TERM") "xterm-256color")
   (set-background-color "black"))
