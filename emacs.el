@@ -17,6 +17,10 @@
 ;; M-l insert lambda
 (global-set-key  (kbd "M-l") (lambda () (interactive) (insert "λ")))
 
+;; M-n / M-p to move by paragraph
+(global-set-key (kbd "M-p") 'backward-paragraph)
+(global-set-key (kbd "M-n") 'forward-paragraph)
+
 ;; Unbind C-t for tmux
 (global-unset-key (kbd "C-t"))
 
