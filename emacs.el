@@ -120,18 +120,6 @@
   (interactive)
   (start-worker-process (project-id "pnpm-serve") "sh" "-c" "pnpm run build && pnpm run serve"))
 
-;; reason lsp configuration
-(when (and (require 'lsp-mode nil t) (require 'reason-mode nil t))
-  (progn
-    (lsp-register-client
-     (make-lsp-client :new-connection (lsp-stdio-connection "reason-language-server")
-                      :major-modes '(reason-mode)
-                      :notification-handlers (ht ("client/registerCapability" 'ignore))
-                      :priority 1
-                      :server-id 'reason-ls))
-    (add-hook 'reason-mode-hook 'lsp-mode)
-    ))
-
 ;; better comint
 (defun turn-on-comint-history ()
   (let ((process (get-buffer-process (current-buffer))))

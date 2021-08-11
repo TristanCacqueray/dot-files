@@ -14,7 +14,8 @@ let
     withNix = true;
     withElixir = true;
     withX = withX;
-    withReason = true;
+    withRescript = true;
+    withReason = false;
     withLsp = true;
     withPython = true;
     withRpm = true;
@@ -43,7 +44,4 @@ let
   else ''
     export TERM=xterm-256color
   '');
-in nixpkgs.mkShell {
-  buildInputs = devenv.devenv;
-  shellHook = devenv.shellEnv.shellHook + custom-env;
-}
+in devenv.devenv

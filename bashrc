@@ -34,3 +34,4 @@ alias cdist="cabal sdist"
 # ssh
 mkdir -p /run/user/$UID/ssh
 export SSH_AUTH_SOCK=/run/user/$UID/gnupg/S.gpg-agent.ssh
+test -z "$SSH_CONNECTION" || export TERM=xterm-256color
