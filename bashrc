@@ -3,17 +3,12 @@ if [ -f /etc/bashrc ]; then
 	. /etc/bashrc
 fi
 
-# User specific environment
-if ! [[ "$PATH" =~ "$HOME/.local/bin:" ]]
-then
-    PATH="$HOME/.local/bin:$PATH"
-fi
-if ! [[ "$PATH" =~ "$HOME/.cabal/bin:" ]]
-then
-    PATH="$HOME/.cabal/bin:$PATH"
+export PATH=$HOME/.local/bin:$HOME/.cabal/bin:$HOME/.nix-profile/bin:/bin:/sbin
+export LC_ALL=C.UTF-8
+if [ -f $HOME/.nix-profile/bin/devenv-profile ]; then
+   . $HOME/.nix-profile/bin/devenv-profile
 fi
 
-export PATH
 alias ls='ls -ap --color=auto'
 alias ctop='systemd-cgtop -c --cpu=time -1 --depth=10 -k'
 alias journalctlf='script -fq /dev/null -c "journalctl --no-hostname -f"  | grep -v syscall=179'

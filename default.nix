@@ -1,6 +1,5 @@
 args@{ withX ? false }:
 let
-  nixpkgs = import ~/src/github.com/podenv/devenv/nixpkgs.nix;
   devenv = import ~/src/github.com/podenv/devenv/default.nix {
     withEmacs = true;
     withEmacsEvil = false;
@@ -12,7 +11,8 @@ let
     withAts = true;
     withDarcs = true;
     withNix = true;
-    withElixir = true;
+    withGit = true;
+    withElixir = false;
     withX = withX;
     withRescript = true;
     withReason = false;
@@ -26,6 +26,10 @@ let
     withIntel = withX;
     withVulkan = withX;
     withOpenGL = withX;
+    withSolarized = withX;
+    withYaml = true;
+    withMarkdown = true;
+    withRestructuredText = true;
     withNeuron = true;
     withGLSL = true;
     withGo = true;
@@ -37,11 +41,7 @@ let
     withOrg = true;
     withRest = true;
     withGraphQL = true;
+    withRuntime = false;
   };
-  # TODO: add module custom env to devenv and move this to !withX
-  custom-env = (if withX then
-    ""
-  else ''
-    export TERM=xterm-256color
-  '');
-in devenv.devenv
+
+in devenv.devenv ++ [devenv.profile]
