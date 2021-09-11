@@ -1,15 +1,9 @@
-let Podenv = env:PODENV_PRELUDE
+let Podenv = ~/src/github.com/podenv/hub/package.dhall
 
-let Hub = env:PODENV_HUB
+let local = ~/.config/podenv/local.dhall ? {=}
 
-let local = ./local.dhall ? ([] : List Podenv.Env.Type)
+let -- todo: migrate ./devenv.dhall
+    devenv =
+      {=}
 
-let devenv = ./devenv.dhall
-
-let setDNS =
-      Hub.Functions.mapEnv
-        (\(env : Podenv.Env.Type) -> env // { dns = Some "192.168.42.42" })
-
-let envs = Hub.Defaults # [ devenv ] # local
-
-in  setDNS envs
+in  Podenv.Hub // local

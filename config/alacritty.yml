@@ -85,11 +85,6 @@ mouse:
   hide_when_typing: false
   triple_click:
     threshold: 300
-  url:
-    launcher:
-      args: []
-      program: xdg-open
-    modifiers: None
 mouse_bindings: []
 opacity:
   background_opacity: 1
