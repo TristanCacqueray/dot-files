@@ -76,8 +76,9 @@ function gnome {
     log "Disable sleep"
     gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-timeout 0
 
-    log "Disable bell"
+    log "Disable bell and blink"
     gsettings set org.gnome.desktop.wm.preferences audible-bell false
+    gsettings set org.gnome.desktop.interface cursor-blink false
 
     log "Replace caps-lock with control"
     gsettings set org.gnome.desktop.input-sources xkb-options "['caps:ctrl_modifier']"
