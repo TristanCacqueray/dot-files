@@ -7,12 +7,13 @@ let
     withShake = true;
     withHaskell = true;
     withRust = true;
+    withElm = true;
     withPurescript = true;
     withAts = true;
     withDarcs = true;
     withNix = true;
     withGit = true;
-    withElixir = false;
+    withElixir = true;
     withX = withX;
     withRescript = true;
     withReason = false;
