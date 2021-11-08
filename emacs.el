@@ -203,5 +203,13 @@
 
 (require 'mynotmuch (concat (getenv "HOME") "/.emacs.d/mynotmuch.el") t)
 
+;; start hls with nix wrapper
+(setq lsp-haskell-server-wrapper-function
+      (lambda (argv)
+        (append (list "nix-shell" "-I" (lsp-haskell--get-root) "--command")
+                (list (mapconcat 'identity argv " ")))
+        ))
+
+
 (provide 'init)
 ;;; emacs ends here
