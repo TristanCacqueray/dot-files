@@ -9,6 +9,10 @@ if [ -f $HOME/.nix-profile/bin/devenv-profile ]; then
    . $HOME/.nix-profile/bin/devenv-profile
 fi
 
+# Ensure emacs magit buffer are readable
+export TERM=xterm-256color
+alias tmux='tmux -2'
+
 alias ls='ls -ap --color=auto'
 alias ctop='systemd-cgtop -c --cpu=time -1 --depth=10 -k'
 alias journalctlf='script -fq /dev/null -c "journalctl --no-hostname -f"  | grep -v syscall=179'
