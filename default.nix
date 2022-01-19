@@ -14,6 +14,7 @@ let
     withNix = true;
     withGit = true;
     withElixir = true;
+    withGleam = true;
     withX = withX;
     withRescript = true;
     withReason = false;

@@ -211,5 +211,22 @@
         ))
 
 
+(require 'gleam-mode)
+(add-to-list 'auto-mode-alist '("\\.gleam$" . gleam-mode))
+
+;; org mode journaling
+(setq org-capture-templates '(
+                              ("t" "todo" entry (file "~/org/refile.org.gpg")
+                               "* TODO %? %a\n%U\n")
+                              ("j" "Journal" entry (file+olp+datetree "~/org/journal.org.gpg")
+                               "* %?\n")
+                              ))
+
+(defun tc/org-capture-journal ()
+  (interactive)
+  "Capture a journal item"
+  (org-capture nil "j"))
+(define-key global-map (kbd "C-9") 'tc/org-capture-journal)
+
 (provide 'init)
 ;;; emacs ends here
