@@ -17,10 +17,10 @@ function log {
 function podenv {
     log "Setup podenv"
     mkdir -p ~/src/github.com/podenv/
-    git clone https://github.com/podenv/podenv ~/src/github.com/podenv/podenv
+#    git clone https://github.com/podenv/podenv ~/src/github.com/podenv/podenv
     git clone https://github.com/podenv/hub ~/src/github.com/podenv/hub
     git clone https://github.com/podenv/devenv ~/src/github.com/podenv/devenv
-    python3 -mpip install --user ~/src/github.com/podenv/podenv
+#    python3 -mpip install --user ~/src/github.com/podenv/podenv
 }
 
 function dnsmasq {
