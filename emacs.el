@@ -235,5 +235,7 @@
   (org-capture nil "j"))
 (define-key global-map (kbd "C-9") 'tc/org-capture-journal)
 
+(setq rust-format-on-save t)
+
 (provide 'init)
 ;;; emacs ends here

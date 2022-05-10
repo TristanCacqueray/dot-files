@@ -39,4 +39,4 @@ test -z "$SSH_CONNECTION" || export TERM=xterm-256color
 export ERL_AFLAGS="-kernel shell_history enabled"
 
 # rust shared build
-export CARGO_TARGET_DIR="$HOME/.cargo/shared_target"
+# export CARGO_TARGET_DIR="$HOME/.cargo/shared_target"
