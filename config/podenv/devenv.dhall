@@ -1,12 +1,12 @@
-let Podenv = ~/src/github.com/podenv/hub/Podenv.dhall
+let Podenv = ~/src/github.com/podenv/local-hub/Podenv.dhall
 
-let Hub = ~/src/github.com/podenv/hub/Applications/package.dhall
+let Hub = ~/src/github.com/podenv/local-hub/Applications/package.dhall
 
 in  Podenv.Application::{
     , name = "devenv"
     , description = Some "A developer environment"
     , namespace = Some "host"
-    , runtime = Hub.nix.use "pkgs.nix"
+    , runtime = Hub.nix.useInstallables [ "github:podenv/devenv" ]
     , command = [ "nix-shell", "--arg", "withX", "true", "--command", "emacs" ]
     , environ = [ "EDITOR=emacsclient", "GDK_BACKEND=x11" ]
     , volumes = [ "~/src", "~/.config/devenv:~" ]
