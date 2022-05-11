@@ -218,7 +218,7 @@
      "--ghc-opt" "-XPatternSynonyms"))
 
 
-(require 'gleam-mode)
+;; (require 'gleam-mode)
 (add-to-list 'auto-mode-alist '("\\.gleam$" . gleam-mode))
 
 ;; org mode journaling
