@@ -3,7 +3,11 @@ if [ -f /etc/bashrc ]; then
 	. /etc/bashrc
 fi
 
-export PATH=$HOME/.local/bin:$HOME/.cabal/bin:$HOME/.nix-profile/bin:/bin:/sbin
+if ! [[ "$PATH" =~ "$HOME/.local/bin:$HOME/bin:" ]]
+then
+    PATH="$HOME/.local/bin:$HOME/.cabal/bin:$HOME/.cargo/bin:$HOME/bin:$PATH"
+fi
+export PATH
 export LC_ALL=C.UTF-8
 if [ -f $HOME/.nix-profile/bin/devenv-profile ]; then
    . $HOME/.nix-profile/bin/devenv-profile
