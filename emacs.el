@@ -237,5 +237,7 @@
 
 (setq rust-format-on-save t)
 
+(setq undo-tree-auto-save-history nil)
+
 (provide 'init)
 ;;; emacs ends here
