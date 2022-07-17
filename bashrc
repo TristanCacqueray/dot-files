@@ -33,6 +33,7 @@ alias crepl="cabal repl --build-depends pretty-simple"
 alias cdoc="cabal haddock --enable-documentation"
 alias cdochackage="cabal haddock --enable-documentation --haddock-for-hackage"
 alias cdist="cabal sdist"
+alias cghcid="ghcid --command='cabal v2-repl'"
 
 # ssh
 mkdir -p /run/user/$UID/ssh
