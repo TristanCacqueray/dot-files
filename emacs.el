@@ -214,9 +214,25 @@
 
 (setq ormolu-extra-args
    '("--ghc-opt" "-XTypeApplications"
-     ;; "--ghc-opt" "-XImportQualifiedPost"
+     "--ghc-opt" "-XImportQualifiedPost"
      "--ghc-opt" "-XPatternSynonyms"))
 
+
+;; Switch to fourmolu
+(defun my/fourmolu ()
+  (setq lsp-haskell-formatting-provider "fourmolu")
+  (setq ormolu-format-on-save-mode nil)
+  (remove-hook 'haskell-mode-hook 'ormolu-format-on-save-mode)
+  (add-hook 'haskell-mode-hook 'format-all-mode)
+  't
+)
+(my/fourmolu)
+;; (setq lsp-haskell-formatting-provider "ormolu")
+
+;; remove haskell stack
+(setq haskell-compiler-type 'cabal)
+(setq haskell-process-type 'cabal-repl)
+;; (setq flycheck-checkers (remove 'haskell-stack-ghc flycheck-checkers))
 
 ;; (require 'gleam-mode)
 (add-to-list 'auto-mode-alist '("\\.gleam$" . gleam-mode))
@@ -234,6 +250,37 @@
   "Capture a journal item"
   (org-capture nil "j"))
 (define-key global-map (kbd "C-9") 'tc/org-capture-journal)
+(defun org-agenda-show-agenda-and-todo (&optional arg)
+  (interactive "P")
+  (org-agenda arg "a"))
+(use-package org-agenda
+  :bind ("<f12>"   . org-agenda-show-agenda-and-todo)
+  :config
+  (setq
+    ;; Start agenda at today
+    org-agenda-start-on-weekday nil
+    ;; Look for agenda item in every org files
+    org-agenda-files '("~/org")
+    ;; Match encrypted files too
+    org-agenda-file-regexp "\\`[^.].*\\.org\\(.gpg\\)?\\'"
+    ;; Do not dim blocked tasks
+    org-agenda-dim-blocked-tasks nil
+    ;; Compact the block agenda view
+    org-agenda-compact-blocks t
+    ;; Customize view
+    org-agenda-custom-commands
+      (quote (("N" "Notes" tags "NOTE"
+               ((org-agenda-overriding-header "Notes")
+                (org-tags-match-list-sublevels t)))
+              ("h" "Habits" tags-todo "STYLE=\"habit\""
+               ((org-agenda-overriding-header "Habits")
+                (org-agenda-sorting-strategy
+                 '(todo-state-down effort-up category-keep))))
+              (" " "Agenda"
+               ((agenda "" nil)
+                (tags "REFILE"
+                      ((org-agenda-overriding-header "Tasks to Refile")
+                       (org-tags-match-list-sublevels nil)))))))))
 
 (setq rust-format-on-save t)
 

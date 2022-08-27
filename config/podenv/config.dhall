@@ -1,4 +1,5 @@
-let Podenv = ~/src/github.com/podenv/local-hub/package.dhall
+-- ~/src/github.com/podenv/local-hub/package.dhall
+let Podenv = env:PODENV
 
 let local = ~/.config/podenv/local.dhall ? {=}
 
