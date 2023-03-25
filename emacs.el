@@ -157,12 +157,11 @@
 
 (defun giturl-to-dir (url)
   "Convert a git URL to a local path."
-  (let ((home (getenv "HOME"))
-        (inf (parse-git-url url)))
+  (let ((inf (parse-git-url url)))
     (when (null (url-host inf))
       (error "Invalid url: %s" url))
     (concat
-     home "/src/" (url-host inf)
+     "/srv/" (url-host inf)
      (replace-regexp-in-string
       " " ""
       (replace-regexp-in-string
@@ -213,9 +212,9 @@
 ;; (setq lsp-haskell-server-wrapper-function nil)
 
 (setq ormolu-extra-args
-   '("--ghc-opt" "-XTypeApplications"
-     "--ghc-opt" "-XImportQualifiedPost"
-     "--ghc-opt" "-XPatternSynonyms"))
+      '("--ghc-opt" "-XTypeApplications"
+        "--ghc-opt" "-XImportQualifiedPost"
+        "--ghc-opt" "-XPatternSynonyms"))
 
 
 ;; Switch to fourmolu
@@ -225,7 +224,7 @@
   (remove-hook 'haskell-mode-hook 'ormolu-format-on-save-mode)
   (add-hook 'haskell-mode-hook 'format-all-mode)
   't
-)
+  )
 (my/fourmolu)
 ;; (setq lsp-haskell-formatting-provider "ormolu")
 
@@ -257,34 +256,56 @@
   :bind ("<f12>"   . org-agenda-show-agenda-and-todo)
   :config
   (setq
-    ;; Start agenda at today
-    org-agenda-start-on-weekday nil
-    ;; Look for agenda item in every org files
-    org-agenda-files '("~/org")
-    ;; Match encrypted files too
-    org-agenda-file-regexp "\\`[^.].*\\.org\\(.gpg\\)?\\'"
-    ;; Do not dim blocked tasks
-    org-agenda-dim-blocked-tasks nil
-    ;; Compact the block agenda view
-    org-agenda-compact-blocks t
-    ;; Customize view
-    org-agenda-custom-commands
-      (quote (("N" "Notes" tags "NOTE"
-               ((org-agenda-overriding-header "Notes")
-                (org-tags-match-list-sublevels t)))
-              ("h" "Habits" tags-todo "STYLE=\"habit\""
-               ((org-agenda-overriding-header "Habits")
-                (org-agenda-sorting-strategy
-                 '(todo-state-down effort-up category-keep))))
-              (" " "Agenda"
-               ((agenda "" nil)
-                (tags "REFILE"
-                      ((org-agenda-overriding-header "Tasks to Refile")
-                       (org-tags-match-list-sublevels nil)))))))))
+   ;; Start agenda at today
+   org-agenda-start-on-weekday nil
+   ;; Look for agenda item in every org files
+   org-agenda-files '("~/org")
+   ;; Match encrypted files too
+   org-agenda-file-regexp "\\`[^.].*\\.org\\(.gpg\\)?\\'"
+   ;; Do not dim blocked tasks
+   org-agenda-dim-blocked-tasks nil
+   ;; Compact the block agenda view
+   org-agenda-compact-blocks t
+   ;; Customize view
+   org-agenda-custom-commands
+   (quote (("N" "Notes" tags "NOTE"
+            ((org-agenda-overriding-header "Notes")
+             (org-tags-match-list-sublevels t)))
+           ("h" "Habits" tags-todo "STYLE=\"habit\""
+            ((org-agenda-overriding-header "Habits")
+             (org-agenda-sorting-strategy
+              '(todo-state-down effort-up category-keep))))
+           (" " "Agenda"
+            ((agenda "" nil)
+             (tags "REFILE"
+                   ((org-agenda-overriding-header "Tasks to Refile")
+                    (org-tags-match-list-sublevels nil)))))))))
 
 (setq rust-format-on-save t)
 
 (setq undo-tree-auto-save-history nil)
+
+(defun start-hls (_mode)
+  "Start HLS by trying to wrap in nix develop"
+  (cd (projectile-project-root))
+  (cond ((file-exists-p "flake.nix")
+         (progn
+           (message "Running HLS with flake")
+           (list "nix" "develop" "--command" "haskell-language-server-wrapper" "--lsp")
+           ))
+        ;; ((file-exists-p "shell.nix")
+        ;;  (progn
+        ;;    (message "TODO: handle shell.nix")))
+        (t (progn
+             (message "Running HLS from host")
+             (list "haskell-language-server-wrapper" "--lsp")))
+        ))
+
+(require 'eglot)
+(add-to-list 'eglot-server-programs
+             '(haskell-mode . start-hls))
+
+(setq ispell-program-name "aspell")
 
 (provide 'init)
 ;;; emacs ends here
