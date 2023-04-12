@@ -84,6 +84,14 @@ function gnome {
     # TODO: add custom0 shortcut for term on Super+Enter
 }
 
+function coredump {
+    echo kernel.core_pattern=/dev/null | sudo tee /etc/sysctl.d/50-coredump.conf
+    sudo sysctl -p /etc/sysctl.d/50-coredump.conf
+    sudo mkdir -p /etc/systemd/coredump.conf.d/
+    echo -e "[Coredump]\nStorage=none" | sudo tee /etc/systemd/coredump.conf.d/custom.conf
+}
+
 podenv
+coredump
 dnsmasq
 gnome
