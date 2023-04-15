@@ -1,6 +1,7 @@
 [user]
   name = Tristan Cacqueray
   email = tdecacqu@redhat.com
+  signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINFW8lYSVF4cU/RYLHgm698ZwbF5jaVgQ549pwHD1PUg tristanc@fedora
 [gitreview]
   username = TristanCacqueray
 [github]
@@ -9,3 +10,5 @@
   defaultBranch = main
 [gitlab]
   user = TristanCacqueray
+[gpg]
+  format = ssh
