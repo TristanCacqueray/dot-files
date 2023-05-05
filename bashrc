@@ -35,13 +35,7 @@ alias cdochackage="cabal haddock --enable-documentation --haddock-for-hackage"
 alias cdist="cabal sdist"
 alias cghcid="ghcid --command='cabal v2-repl'"
 
-# ssh
-mkdir -p /run/user/$UID/ssh
-export SSH_AUTH_SOCK=/run/user/$UID/gnupg/S.gpg-agent.ssh
 test -z "$SSH_CONNECTION" || export TERM=xterm-256color
 
 # erlang repl history
 export ERL_AFLAGS="-kernel shell_history enabled"
-
-# rust shared build
-# export CARGO_TARGET_DIR="$HOME/.cargo/shared_target"
