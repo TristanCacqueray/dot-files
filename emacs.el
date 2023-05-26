@@ -120,6 +120,23 @@
   (interactive)
   (start-worker-process (project-id "pnpm-serve") "sh" "-c" "pnpm run build && pnpm run serve"))
 
+(defun get-newest-file-from-dir  (path)
+  (car (directory-files path 'full nil #'file-newer-than-file-p)))
+
+(defun copy-screenshot-markdown (name)
+  "Copy latest screenshot and insert markdown link"
+  (interactive "Mname: ")
+  (let* ((infile (expand-file-name (get-newest-file-from-dir "~/Pictures/Screenshots")))
+        (outdir (concat (file-name-directory (buffer-file-name)) "/media"))
+        (outfile (expand-file-name (concat name ".png") outdir)))
+    (unless (file-directory-p outdir)
+      (make-directory outdir t))
+    (message "copy-screenshot-markdown %s %s" infile outfile)
+    (rename-file infile outfile)
+    (insert (concat (concat "![" name "](media/" (file-name-nondirectory outfile)) ")")))
+  (newline)
+  (newline))
+
 ;; better comint
 (defun turn-on-comint-history ()
   (let ((process (get-buffer-process (current-buffer))))
