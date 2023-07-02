@@ -9,6 +9,7 @@ _build/
 build/
 .coverage
 .env
+/imgui.ini
 
 # haskell
 dist
