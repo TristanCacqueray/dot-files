@@ -318,9 +318,34 @@
              (list "haskell-language-server-wrapper" "--lsp")))
         ))
 
+(defun start-rust-analyzer (_mode)
+  "Start rust-analyzer by trying to wrap in nix develop"
+  (cd (projectile-project-root))
+  (cond ((file-exists-p "flake.nix")
+         (progn
+           (message "Running rust-analyzer with flake")
+           (list "nix" "develop" "--command" "rust-analyzer")
+           ))
+        ;; ((file-exists-p "shell.nix")
+        ;;  (progn
+        ;;    (message "TODO: handle shell.nix")))
+        (t (progn
+             (message "Running rust-analyzer from host")
+             (list "rust-analyzer")))
+        ))
+
 (require 'eglot)
 (add-to-list 'eglot-server-programs
              '(haskell-mode . start-hls))
+(add-to-list 'eglot-server-programs
+             '(gleam-mode "gleam" "lsp"))
+(add-to-list 'eglot-server-programs
+             '(rust-mode . start-rust-analyzer))
+
+
+
+(setq load-path (cons "/srv/github.com/leanprover/lean4-mode" load-path))
+(require 'lean4-mode)
 
 (setq ispell-program-name "aspell")
 
