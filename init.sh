@@ -65,7 +65,23 @@ function gnome {
     gsettings set org.gnome.desktop.wm.preferences num-workspaces 9
     for i in $(seq 1 9); do gsettings set org.gnome.shell.keybindings switch-to-application-${i} []; done
     for i in $(seq 1 9); do gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-${i} "['<Super><Shift>${i}']"; done
-    for i in $(seq 1 9); do gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-${i} "['<Super>${i}']"; done
+
+    # Switch workspace using super-homerow
+    # for i in $(seq 1 9); do gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-${i} "['<Super>${i}']"; done
+    gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-1 "['<Super>a']"
+    gsettings set org.gnome.shell.keybindings toggle-overview [''] # ['<Super>s']
+    gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-2 "['<Super>s']"
+    gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-3 "['<Super>d']"
+    gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-4 "['<Super>f']"
+    gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-5 "['<Super>g']"
+    gsettings set org.gnome.desktop.wm.keybindings minimize [''] # ['<Super>h']
+    gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-6 "['<Super>h']"
+    gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-7 "['<Super>j']"
+    gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-8 "['<Super>k']"
+    gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-9 "['<Super>l']"
+
+    gsettings set org.gnome.settings-daemon.plugins.media-keys rotate-video-lock-static ['']
+    gsettings set org.gnome.settings-daemon.plugins.media-keys screensaver ['<Super>i'] # super-l somehow does not work :/
 
     log "Setup awesome key bindings"
     gsettings set org.gnome.desktop.wm.keybindings cycle-windows "['<Super>Tab']"
