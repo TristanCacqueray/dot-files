@@ -85,7 +85,9 @@ function gnome {
 
     log "Setup awesome key bindings"
     gsettings set org.gnome.desktop.wm.keybindings cycle-windows "['<Super>Tab']"
-    gsettings set org.gnome.desktop.wm.keybindings cycle-windows-backward "['<Shift><Super>Tab']"
+    gsettings set org.gnome.desktop.wm.keybindings cycle-windows-backward ['']
+    gsettings set org.gnome.desktop.wm.keybindings switch-applications ['']
+    gsettings set org.gnome.desktop.wm.keybindings switch-applications-backward ['']
 
     log "Disable sleep"
     gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-timeout 0
