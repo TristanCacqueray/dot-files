@@ -21,6 +21,10 @@
 (global-set-key (kbd "M-p") 'backward-paragraph)
 (global-set-key (kbd "M-n") 'forward-paragraph)
 
+;; C-ins / M-ins to copy/paste from the system clipboard
+(global-set-key (kbd "C-<insert>") 'simpleclip-copy)
+(global-set-key (kbd "M-<insert>") 'simpleclip-paste)
+
 ;; Unbind C-t for tmux
 (global-unset-key (kbd "C-t"))
 
