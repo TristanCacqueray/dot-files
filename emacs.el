@@ -25,6 +25,9 @@
 (global-set-key (kbd "C-<insert>") 'simpleclip-copy)
 (global-set-key (kbd "M-<insert>") 'simpleclip-paste)
 
+;; C-, to yank
+(global-set-key (kbd "C-,") 'yank)
+
 ;; Unbind C-t for tmux
 (global-unset-key (kbd "C-t"))
 
