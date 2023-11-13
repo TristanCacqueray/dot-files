@@ -31,6 +31,18 @@
 ;; Unbind C-t for tmux
 (global-unset-key (kbd "C-t"))
 
+;; multiple-cursors
+(global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
+(global-set-key (kbd "C->") 'mc/mark-next-like-this)
+(global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+(global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
+
+;; easier to access undo
+(global-set-key (kbd "M-u") 'undo)
+
+;; avy
+(global-set-key (kbd "C-;") 'avy-goto-char-timer)
+
 ;; improve vt rendering
 (when (string-equal (getenv "TERM") "xterm-256color")
   (set-background-color "black"))
