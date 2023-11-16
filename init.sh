@@ -64,7 +64,18 @@ function gnome {
     gsettings set org.gnome.mutter dynamic-workspaces false
     gsettings set org.gnome.desktop.wm.preferences num-workspaces 9
     for i in $(seq 1 9); do gsettings set org.gnome.shell.keybindings switch-to-application-${i} []; done
-    for i in $(seq 1 9); do gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-${i} "['<Super><Shift>${i}']"; done
+    # for i in $(seq 1 9); do gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-${i} "['<Super><Shift>${i}']"; done
+
+    # Move window to workspace using super-upperrow
+    gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-1 "['<Super>q']"
+    gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-2 "['<Super>w']"
+    gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-3 "['<Super>e']"
+    gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-4 "['<Super>r']"
+    gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-5 "['<Super>t']"
+    gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-6 "['<Super>y']"
+    gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-7 "['<Super>u']"
+    gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-8 "['<Super>i']"
+    gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-9 "['<Super>o']"
 
     # Switch workspace using super-homerow
     # for i in $(seq 1 9); do gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-${i} "['<Super>${i}']"; done
