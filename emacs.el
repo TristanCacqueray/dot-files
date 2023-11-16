@@ -43,6 +43,13 @@
 ;; avy
 (global-set-key (kbd "C-;") 'avy-goto-char-timer)
 
+;; meh shortcuts
+(global-set-key (kbd "M-S-RET") 'delete-other-windows)
+(global-set-key (kbd "C-M-<") 'split-window-below)
+(global-set-key (kbd "C-M->") 'split-window-right)
+(global-set-key (kbd "C-M-S-b") 'ivy-switch-buffer)
+(global-set-key (kbd "C-M-f") 'counsel-find-file)
+
 ;; improve vt rendering
 (when (string-equal (getenv "TERM") "xterm-256color")
   (set-background-color "black"))
