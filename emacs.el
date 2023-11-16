@@ -41,17 +41,7 @@
 (global-set-key (kbd "M-u") 'undo)
 
 ;; avy
-(global-set-key (kbd "C-;") 'avy-goto-char-timer)
-
-;; meh shortcuts
-(global-set-key (kbd "C-M-S-n") 'delete-window)
-(global-set-key (kbd "M-S-RET") 'delete-other-windows)
-(global-set-key (kbd "C-M-<") 'split-window-below)
-(global-set-key (kbd "C-M->") 'split-window-right)
-(global-set-key (kbd "C-M-S-b") 'ivy-switch-buffer)
-(global-set-key (kbd "C-M-f") 'counsel-find-file)
-(global-set-key (kbd "C-M-S-p") 'projectile-switch-project)
-(global-set-key (kbd "C-M-S-o") 'projectile-find-file)
+(global-set-key (kbd "M-g d") 'avy-goto-char-timer)
 
 ;; improve vt rendering
 (when (string-equal (getenv "TERM") "xterm-256color")
