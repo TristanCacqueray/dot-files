@@ -43,6 +43,9 @@
 ;; avy
 (global-set-key (kbd "M-g d") 'avy-goto-char-timer)
 
+;; enable standard unicode input (but still needs to press bksp-enter to complete the sequence)
+(define-key global-map (kbd "C-S-u") 'insert-char)
+
 ;; improve vt rendering
 (when (string-equal (getenv "TERM") "xterm-256color")
   (set-background-color "black"))
