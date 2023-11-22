@@ -14,8 +14,8 @@
 ;; should make windmove key work in org-mode
 (setq org-replace-disputed-keys t)
 
-;; M-l insert lambda
-(global-set-key  (kbd "M-l") (lambda () (interactive) (insert "λ")))
+;; M-l counsel-git-grep
+(global-set-key  (kbd "M-l") 'counsel-git-grep)
 
 ;; M-n / M-p to move by paragraph
 (global-set-key (kbd "M-p") 'backward-paragraph)
