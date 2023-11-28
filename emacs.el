@@ -368,6 +368,8 @@
              '(gleam-mode "gleam" "lsp"))
 (add-to-list 'eglot-server-programs
              '(rust-mode . start-rust-analyzer))
+(add-to-list 'eglot-server-programs
+             '(rust-ts-mode . start-rust-analyzer))
 
 (setq ispell-program-name "aspell")
 
