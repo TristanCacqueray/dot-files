@@ -43,8 +43,13 @@
 ;; avy
 (global-set-key (kbd "M-g d") 'avy-goto-char-timer)
 
-;; enable standard unicode input (but still needs to press bksp-enter to complete the sequence)
-(define-key global-map (kbd "C-S-u") 'insert-char)
+;; enable standard linux unicode input
+(define-key global-map (kbd "C-S-u") 'read-unicode-char)
+
+(defun read-unicode-char (c1 c2 c3 c4 _trailing_space_ignored)
+  "Convert unicode input C1 C2 C3 C4 to the corresponding insert char call."
+  (interactive "c\nc\nc\nc\nc")
+  (insert-char (string-to-number (format "%c%c%c%c" c1 c2 c3 c4) 16)))
 
 ;; improve vt rendering
 (when (string-equal (getenv "TERM") "xterm-256color")
