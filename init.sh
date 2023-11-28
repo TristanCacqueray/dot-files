@@ -82,6 +82,7 @@ function gnome {
     gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-1 "['<Super>a']"
     gsettings set org.gnome.shell.keybindings toggle-application-view ['']
     gsettings set org.gnome.shell.keybindings toggle-overview [''] # ['<Super>s']
+    gsettings set org.gnome.shell.keybindings toggle-quick-settings ['']
     gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-2 "['<Super>s']"
     gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-3 "['<Super>d']"
     gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-4 "['<Super>f']"

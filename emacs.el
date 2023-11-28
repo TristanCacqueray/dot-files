@@ -364,11 +364,6 @@
 (add-to-list 'eglot-server-programs
              '(rust-mode . start-rust-analyzer))
 
-
-
-(setq load-path (cons "/srv/github.com/leanprover/lean4-mode" load-path))
-(require 'lean4-mode)
-
 (setq ispell-program-name "aspell")
 
 (provide 'init)
