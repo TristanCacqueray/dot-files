@@ -373,5 +373,114 @@
 
 (setq ispell-program-name "aspell")
 
+
+
+(defun xah-get-bounds-of-block ()
+  "Return the boundary (START . END) of current block.
+Version: 2021-08-12"
+  (let ( $p1 $p2 ($blankRegex "\n[ \t]*\n"))
+    (save-excursion
+      (setq $p1 (if (re-search-backward $blankRegex nil 1)
+                    (goto-char (match-end 0))
+                  (point)))
+      (setq $p2 (if (re-search-forward $blankRegex nil 1)
+                    (match-beginning 0)
+                  (point))))
+    (cons $p1 $p2 )))
+
+(defun xah-get-bounds-of-block-or-region ()
+  "If region is active, return its boundary, else same as `xah-get-bounds-of-block'.
+Version: 2021-08-12"
+  (if (region-active-p)
+      (cons (region-beginning) (region-end))
+    (xah-get-bounds-of-block)))
+
+(defun xah-quote-lines (QuoteL QuoteR Sep)
+  "Add quotes/brackets and separator (comma) to lines.
+Act on current block or selection.
+
+For example,
+
+ cat
+ dog
+ cow
+
+becomes
+
+ \"cat\",
+ \"dog\",
+ \"cow\",
+
+or
+
+ (cat)
+ (dog)
+ (cow)
+
+In lisp code, QuoteL QuoteR Sep are strings.
+
+URL `http://xahlee.info/emacs/emacs/emacs_quote_lines.html'
+Version: 2020-06-26 2023-09-19 2023-10-29"
+  (interactive
+   (let ((xbrackets
+          '(
+            "\"double quote\""
+            "'single quote'"
+            "(paren)"
+            "{brace}"
+            "[square]"
+            "<greater>"
+            "`emacs'"
+            "`markdown`"
+            "~tilde~"
+            "=equal="
+            "“curly double”"
+            "‘curly single’"
+            "‹french angle›"
+            "«french double angle»"
+            "「corner」"
+            "none"
+            "other"
+            ))
+         (xcomma '("comma ," "semicolon ;" "none" "other"))
+         xbktChoice xsep xsepChoice xquoteL xquoteR)
+     (let ((completion-ignore-case t))
+       (setq xbktChoice (completing-read "Quote to use:" xbrackets nil t nil nil (car xbrackets)))
+       (setq xsepChoice (completing-read "line separator:" xcomma nil t nil nil (car xcomma))))
+     (cond
+      ((string-equal xbktChoice "none")
+       (setq xquoteL "" xquoteR ""))
+      ((string-equal xbktChoice "other")
+       (let ((xx (read-string "Enter 2 chars, for begin/end quote:")))
+         (setq xquoteL (substring xx 0 1)
+               xquoteR (substring xx 1 2))))
+      (t (setq xquoteL (substring xbktChoice 0 1)
+               xquoteR (substring xbktChoice -1))))
+     (setq xsep
+           (cond
+            ((string-equal xsepChoice "comma ,") ",")
+            ((string-equal xsepChoice "semicolon ;") ";")
+            ((string-equal xsepChoice "none") "")
+            ((string-equal xsepChoice "other") (read-string "Enter separator:"))
+            (t xsepChoice)))
+     (list xquoteL xquoteR xsep)))
+  (let (xp1 xp2 (xquoteL QuoteL) (xquoteR QuoteR) (xsep Sep))
+    (let ((xbds (xah-get-bounds-of-block-or-region)))
+      (setq xp1 (car xbds) xp2 (cdr xbds)))
+    (save-excursion
+      (save-restriction
+        (narrow-to-region xp1 xp2)
+        (goto-char (point-min))
+        (catch 'EndReached
+          (while t
+            (skip-chars-forward "\t ")
+            (insert xquoteL)
+            (end-of-line)
+            (insert xquoteR xsep)
+            (if (eq (point) (point-max))
+                (throw 'EndReached t)
+              (forward-char))))))))
+
+
 (provide 'init)
 ;;; emacs ends here
