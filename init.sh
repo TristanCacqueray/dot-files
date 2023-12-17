@@ -120,6 +120,7 @@ function coredump {
     sudo sysctl -p /etc/sysctl.d/50-coredump.conf
     sudo mkdir -p /etc/systemd/coredump.conf.d/
     echo -e "[Coredump]\nStorage=none" | sudo tee /etc/systemd/coredump.conf.d/custom.conf
+    sudo systemctl disable plocate-updatedb.timer
 }
 
 podenv
