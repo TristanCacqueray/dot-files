@@ -113,6 +113,8 @@ function gnome {
     gsettings set org.gnome.desktop.input-sources xkb-options "['caps:ctrl_modifier']"
 
     # TODO: add custom0 shortcut for term on Super+Enter
+    # TODO: add custom1 shortcut for gmrun on Super+v
+    gsettings set org.gnome.shell.keybindings toggle-message-tray ['']
 }
 
 function coredump {

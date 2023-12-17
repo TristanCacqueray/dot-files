@@ -1,0 +1,3 @@
+History = 4096
+URL_hs = firefox "https://hackage.haskell.org/package/%s"
+URL_rs = firefox "https://docs.rs/%s"
