@@ -11,6 +11,9 @@ build/
 .env
 /imgui.ini
 
+# lean
+/.lake
+
 # haskell
 dist
 dist-*
