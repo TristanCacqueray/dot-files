@@ -9,10 +9,30 @@
  mime-edit-pgp-signers '("EB103DE8B5E69E631C6FF17922B9A05C925CC5D8")
  auth-sources '("~/.authinfo.gpg"))
 
+(setq mode-line-right-align-edge 'right-margin)
+(setq-default mode-line-format
+              '("%e" mode-line-front-space
+                (:propertize ("" mode-line-mule-info mode-line-client mode-line-modified mode-line-remote) display (min-width (5.0)))
+                mode-line-frame-identification
+                mode-line-buffer-identification
+                "   "
+                mode-line-position
+                (vc-mode vc-mode)
+                "  "
+                mode-line-modes
+                mode-line-format-right-align ;; push date to the end of the line
+                mode-line-misc-info
+                ))
+(setq-default display-time-format "%Y-%m-%d %a %H:%M")
+(display-time-mode)
+
 (setenv "EDITOR" "emacsclient")
 
+;; disable org-todo pop-up
+(setq-default org-use-fast-todo-selection 'expert)
+
 ;; should make windmove key work in org-mode
-(setq org-replace-disputed-keys t)
+(setq-default org-replace-disputed-keys t)
 
 ;; M-l counsel-git-grep
 (global-set-key  (kbd "M-l") 'counsel-git-grep)
@@ -154,8 +174,8 @@
   "Copy latest screenshot and insert markdown link"
   (interactive "Mname: ")
   (let* ((infile (expand-file-name (get-newest-file-from-dir "~/Pictures/Screenshots")))
-        (outdir (concat (file-name-directory (buffer-file-name)) "/media"))
-        (outfile (expand-file-name (concat name ".png") outdir)))
+         (outdir (concat (file-name-directory (buffer-file-name)) "/media"))
+         (outfile (expand-file-name (concat name ".png") outdir)))
     (unless (file-directory-p outdir)
       (make-directory outdir t))
     (message "copy-screenshot-markdown %s %s" infile outfile)
