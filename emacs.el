@@ -28,6 +28,9 @@
 
 (setenv "EDITOR" "emacsclient")
 
+;; disable magit-status pop-up
+(setq-default magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1)
+
 ;; disable org-todo pop-up
 (setq-default org-use-fast-todo-selection 'expert)
 
