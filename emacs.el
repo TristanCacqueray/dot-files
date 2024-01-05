@@ -144,7 +144,12 @@
 
 ;; Create project name based id
 (defun project-id (suffix)
-  (concat (projectile-project-name) "-" suffix))
+  (let ((pname
+         (if (string= default-directory "~/")
+             (getenv "USER") (projectile-project-name)
+             )))
+    (concat pname "-" suffix)))
+
 
 ;; function to start shell
 (defun pshell ()
