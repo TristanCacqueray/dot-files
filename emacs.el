@@ -26,16 +26,17 @@
 (setq-default display-time-format "%Y-%m-%d %a %H:%M")
 (display-time-mode)
 
+;; (use-package org-alert
+;;   :ensure t
+;;   :config
+;;   (setq-default alert-default-style 'libnotify)
+;;   (org-alert-enable)
+;; )
+
 (setenv "EDITOR" "emacsclient")
 
 ;; disable magit-status pop-up
 (setq-default magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1)
-
-;; disable org-todo pop-up
-(setq-default org-use-fast-todo-selection 'expert)
-
-;; should make windmove key work in org-mode
-(setq-default org-replace-disputed-keys t)
 
 ;; M-l counsel-git-grep
 (global-set-key  (kbd "M-l") 'counsel-git-grep)
@@ -67,12 +68,11 @@
 (global-set-key (kbd "M-g d") 'avy-goto-char-timer)
 
 ;; enable standard linux unicode input
-(define-key global-map (kbd "C-S-u") 'read-unicode-char)
-
 (defun read-unicode-char (c1 c2 c3 c4 _trailing_space_ignored)
   "Convert unicode input C1 C2 C3 C4 to the corresponding insert char call."
   (interactive "c\nc\nc\nc\nc")
   (insert-char (string-to-number (format "%c%c%c%c" c1 c2 c3 c4) 16)))
+(define-key global-map (kbd "C-S-u") 'read-unicode-char)
 
 ;; improve vt rendering
 (when (string-equal (getenv "TERM") "xterm-256color")
@@ -114,7 +114,6 @@
 (require 'projectile)
 (setq-default
  projectile-switch-project-action (quote magit-status))
-(global-set-key (kbd "<f5>") (quote projectile-compile-project))
 
 ;; Ace navigation
 (global-set-key (kbd "M-o") 'ace-window)
@@ -272,6 +271,7 @@
                                  "\" -f _MOTIF_WM_HINTS 32c -set _MOTIF_WM_HINTS '0x2, 0x0, 0x0, 0x0, 0x0'"))))
 
 
+(require 'mygtd (concat (getenv "HOME") "/.mygtd.el") t)
 (require 'mynotmuch (concat (getenv "HOME") "/.emacs.d/mynotmuch.el") t)
 
 ;; start hls with nix wrapper
@@ -308,50 +308,6 @@
 ;; (require 'gleam-mode)
 (add-to-list 'auto-mode-alist '("\\.gleam$" . gleam-mode))
 
-;; org mode journaling
-(setq org-capture-templates '(
-                              ("t" "todo" entry (file "~/org/refile.org.gpg")
-                               "* TODO %? %a\n%U\n")
-                              ("j" "Journal" entry (file+olp+datetree "~/org/journal.org.gpg")
-                               "* %?\n")
-                              ))
-
-(defun tc/org-capture-journal ()
-  (interactive)
-  "Capture a journal item"
-  (org-capture nil "j"))
-(define-key global-map (kbd "C-9") 'tc/org-capture-journal)
-(defun org-agenda-show-agenda-and-todo (&optional arg)
-  (interactive "P")
-  (org-agenda arg "a"))
-(use-package org-agenda
-  :bind ("<f12>"   . org-agenda-show-agenda-and-todo)
-  :config
-  (setq
-   ;; Start agenda at today
-   org-agenda-start-on-weekday nil
-   ;; Look for agenda item in every org files
-   org-agenda-files '("~/org")
-   ;; Match encrypted files too
-   org-agenda-file-regexp "\\`[^.].*\\.org\\(.gpg\\)?\\'"
-   ;; Do not dim blocked tasks
-   org-agenda-dim-blocked-tasks nil
-   ;; Compact the block agenda view
-   org-agenda-compact-blocks t
-   ;; Customize view
-   org-agenda-custom-commands
-   (quote (("N" "Notes" tags "NOTE"
-            ((org-agenda-overriding-header "Notes")
-             (org-tags-match-list-sublevels t)))
-           ("h" "Habits" tags-todo "STYLE=\"habit\""
-            ((org-agenda-overriding-header "Habits")
-             (org-agenda-sorting-strategy
-              '(todo-state-down effort-up category-keep))))
-           (" " "Agenda"
-            ((agenda "" nil)
-             (tags "REFILE"
-                   ((org-agenda-overriding-header "Tasks to Refile")
-                    (org-tags-match-list-sublevels nil)))))))))
 
 (setq rust-format-on-save t)
 
@@ -509,6 +465,31 @@ Version: 2020-06-26 2023-09-19 2023-10-29"
                 (throw 'EndReached t)
               (forward-char))))))))
 
+
+(use-package helpful
+  :config
+;; Note that the built-in `describe-function' includes both functions
+;; and macros. `helpful-function' is functions only, so we provide
+;; `helpful-callable' as a drop-in replacement.
+(global-set-key (kbd "C-h f") #'helpful-callable)
+
+(global-set-key (kbd "C-h v") #'helpful-variable)
+(global-set-key (kbd "C-h k") #'helpful-key)
+(global-set-key (kbd "C-h x") #'helpful-command)
+
+;; Lookup the current symbol at point. C-c C-d is a common keybinding
+;; for this in lisp modes.
+(global-set-key (kbd "C-c C-d") #'helpful-at-point)
+
+;; Look up *F*unctions (excludes macros).
+;;
+;; By default, C-h F is bound to `Info-goto-emacs-command-node'. Helpful
+;; already links to the manual, if a function is referenced there.
+(global-set-key (kbd "C-h F") #'helpful-function)
+
+(setq counsel-describe-function-function #'helpful-callable)
+(setq counsel-describe-variable-function #'helpful-variable)
+)
 
 (provide 'init)
 ;;; emacs ends here
