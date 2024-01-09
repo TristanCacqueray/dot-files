@@ -282,11 +282,12 @@
   "Format 'org-ql-select' output. ITEM is a prop list."
   (let* ((properties (cadr item))
          (title (plist-get properties :raw-value))
+         (status (plist-get properties :todo-keyword))
+         (status-str (if (string= status "DONE") "" status))
          (category (org-entry-get (plist-get properties :org-marker) "CATEGORY"))
          )
-    (format "* %s - %s" (s-pad-left 13 " " category) (tc/remove-links title))
-    )
-  )
+    (format "* %s - %s %s" (s-pad-left 9 " " category) status-str (tc/remove-links title))))
+
 (defun tc/daily-format (items)
   "Format all ITEMS."
   (let ((today (format-time-string "%Y-%m-%d")))
@@ -296,8 +297,7 @@
 
 (defun tc/mk-daily-query ()
   ;; TODO: make that one day during the week
-  '(and (done) (ts :from -3 :to today))
-)
+  '(and (or (todo "DONE") (todo "NEXT")) (ts :from -3 :to today)))
 
 (defun tc/show-daily-report ()
   "Show daily report."
@@ -308,18 +308,34 @@
 ;; From anywhere, f6 shows the daily report
 (define-key global-map (kbd "<f6>") 'tc/daily-report)
 
+(defun tc/compare-entry (b a)
+  "Order entry A and B so that they appears from newest to oldest.
+This is like org-ql--date< but considering closed date too."
+  (cl-macrolet ((ts (item)
+                  `(or (org-element-property :closed ,item)
+                       (org-element-property :deadline ,item)
+                       (org-element-property :scheduled ,item))))
+    (org-ql--org-timestamp-element< (ts a) (ts b))))
+
 (defun tc/mk-daily-report ()
   "Produce a report for team daily."
   (interactive)
   (let* ((entries (org-ql-select "~/org/gtd.org.gpg"
                     (tc/mk-daily-query)
                     :action 'element-with-markers
+                    :sort 'tc/compare-entry
                     ))
          (report (tc/daily-format entries))
          (*buffer* (get-buffer-create "*tc/daily*")))
     (with-current-buffer *buffer*
       (erase-buffer)
       (insert report)
+      (set-text-properties (point-min) (point-max) nil)
+      ;; move the cursor at begining of entries
+      (goto-char (point-min))
+      (forward-line 2)
+      (cl-dolist (window (get-buffer-window-list nil nil t))
+        (set-window-point window (point)))
       )
     (switch-to-buffer-other-window *buffer*)
     )
