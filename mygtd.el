@@ -283,10 +283,10 @@
   (let* ((properties (cadr item))
          (title (plist-get properties :raw-value))
          (status (plist-get properties :todo-keyword))
-         (status-str (if (string= status "DONE") "" status))
+         (status-str (if (string= status "DONE") "" (concat status ": ")))
          (category (org-entry-get (plist-get properties :org-marker) "CATEGORY"))
          )
-    (format "* %s - %s %s" (s-pad-left 9 " " category) status-str (tc/remove-links title))))
+    (format "* %s - %s%s" (s-pad-left 9 " " category) status-str (tc/remove-links title))))
 
 (defun tc/daily-format (items)
   "Format all ITEMS."
