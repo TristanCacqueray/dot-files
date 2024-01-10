@@ -10,7 +10,13 @@
 
 (require 'org-ql)
 
+(setq org-icalendar-timezone "America/New_York")
+
 (setq-default org-default-notes-file "~/org/gtd.org.gpg")
+(setq tc/org-reviews-files '("~/org/gtd.org.gpg" "~/org/gtd_archive.gpg"))
+
+;; Look for agenda item in these files
+(setq-default org-agenda-files '("~/org/gtd.org.gpg" "~/org/agenda.org.gpg"))
 
 (use-package org
   :config
@@ -43,15 +49,6 @@
 
    ;; But don't bother with notes when using shift arrows
    org-treat-S-cursor-todo-selection-as-state-change nil
-
-   ;; Auto tag task on change
-   org-todo-state-tags-triggers (quote (("CANCELLED" ("CANCELLED" (). t))
-                                        ("WAITING" ("WAITING" . t))
-                                        ("HOLD" ("WAITING") ("HOLD" . t))
-                                        (done ("WAITING") ("HOLD"))
-                                        ("TODO" ("WAITING") ("CANCELLED") ("HOLD"))
-                                        ("NEXT" ("WAITING") ("CANCELLED") ("HOLD"))
-                                        ("DONE" ("WAITING") ("CANCELLED") ("HOLD"))))
 
    ;; Only show one star, though this is overridden by org-bullets
    ;; org-hide-leading-stars t
@@ -111,10 +108,13 @@
    ;; Targets complete directly
    org-outline-path-complete-in-steps nil
    )
+  (setq org-refile-use-cache nil)
   (setq org-capture-templates
         '(
           ("t" "todo" entry (file+headline "~/org/gtd.org.gpg" "Inbox")
-           "* TODO %? %a\n/Entered on/ %U\n")
+           "* TODO %?\n/Entered on/ %U\n")
+          ("d" "done" entry (file+headline "~/org/gtd.org.gpg" "Inbox")
+           "* DONE %?\nCLOSED: %U\n")
           ("j" "Journal" entry (file+olp+datetree "~/org/journal.org.gpg")
            "* %?\n")
           ))
@@ -125,6 +125,13 @@
     (org-capture nil "t"))
 
   (define-key global-map (kbd "<f5>") 'tc/org-capture-todo)
+
+  (defun tc/org-capture-done ()
+    (interactive)
+    (call-interactively 'org-store-link)
+    (org-capture nil "d"))
+
+  (define-key global-map (kbd "<f8>") 'tc/org-capture-done)
 
   (defun tc/org-capture-journal ()
     "Capture a journal item"
@@ -145,10 +152,6 @@
   (setq
    ;; Start agenda at today
    org-agenda-start-on-weekday nil
-   ;; Look for agenda item in every org files
-   org-agenda-files '("~/org")
-   ;; Match encrypted files too
-   org-agenda-file-regexp "\\`[^.].*\\.org\\(.gpg\\)?\\'"
    ;; Do not dim blocked tasks
    org-agenda-dim-blocked-tasks nil
    ;; Compact the block agenda view
@@ -180,58 +183,6 @@
 
 ;; f4 shows the gtd view
 (define-key global-map (kbd "<f4>") (lambda () (interactive) (org-agenda nil "g")))
-
-;; Review agenda from: https://stackoverflow.com/a/22440571
-;; Common settings for all reviews
-(setq tc/org-agenda-review-settings
-      '((org-agenda-files '("~/org/gtd.org.gpg"
-                            ))
-        (org-agenda-show-all-dates t)
-        (org-agenda-start-with-log-mode t)
-        (org-agenda-start-with-clockreport-mode t)
-        (org-agenda-archives-mode t)
-        ;; I don't care if an entry was archived
-        (org-agenda-hide-tags-regexp
-         (concat org-agenda-hide-tags-regexp
-                 "\\|ARCHIVE"))
-        ))
-(add-to-list 'org-agenda-custom-commands
-             `("w" "Week in review"
-               agenda ""
-               ;; agenda settings
-               ,(append
-                 tc/org-agenda-review-settings
-                 '((org-agenda-span 'week)
-                   (org-agenda-start-on-weekday 0)
-                   (org-agenda-overriding-header "Week in Review"))
-                 )
-               ("~/org/review/week.html")
-               ))
-(add-to-list 'org-agenda-custom-commands
-             `("d" "Day in review"
-               agenda ""
-               ;; agenda settings
-               ,(append
-                 tc/org-agenda-review-settings
-                 '((org-agenda-span 'day)
-                   (org-agenda-overriding-header "Day in Review"))
-                 )
-               ("~/org/review/day.html")
-               ))
-(add-to-list 'org-agenda-custom-commands
-             `("m" "Month in review"
-               agenda ""
-               ;; agenda settings
-               ,(append
-                 tc/org-agenda-review-settings
-                 '((org-agenda-span 'month)
-                   (org-agenda-start-day "01")
-                   (org-read-date-prefer-future nil)
-                   (org-agenda-overriding-header "Month in Review"))
-                 )
-               ("~/org/review/month.html")
-               ))
-
 
 (defun tc/get-buffer-content ()
   "return buffer or region content."
@@ -299,14 +250,21 @@
   ;; TODO: make that one day during the week
   '(and (or (todo "DONE") (todo "NEXT")) (ts :from -3 :to today)))
 
+(defun tc/mk-review-query ()
+  ;; TODO: make that one day during the week
+  '(and (or (todo "DONE") (todo "NEXT")) (ts :from -21 :to today)))
+
+(defun tc/show-review-report ()
+  "Show daily report."
+  (interactive)
+  (org-ql-search "~/org/gtd.org.gpg" (tc/mk-review-query)
+    :super-groups '((:category))))
+
 (defun tc/show-daily-report ()
   "Show daily report."
   (interactive)
-  (org-ql-search "~/org/gtd.org.gpg" (tc/mk-daily-query)
+  (org-ql-search tc/org-reviews-files (tc/mk-daily-query)
     :super-groups '((:auto-ts t))))
-
-;; From anywhere, f6 shows the daily report
-(define-key global-map (kbd "<f6>") 'tc/daily-report)
 
 (defun tc/compare-entry (b a)
   "Order entry A and B so that they appears from newest to oldest.
@@ -320,7 +278,7 @@ This is like org-ql--date< but considering closed date too."
 (defun tc/mk-daily-report ()
   "Produce a report for team daily."
   (interactive)
-  (let* ((entries (org-ql-select "~/org/gtd.org.gpg"
+  (let* ((entries (org-ql-select tc/org-reviews-files
                     (tc/mk-daily-query)
                     :action 'element-with-markers
                     :sort 'tc/compare-entry
@@ -340,6 +298,9 @@ This is like org-ql--date< but considering closed date too."
     (switch-to-buffer-other-window *buffer*)
     )
   )
+
+;; From anywhere, f6 shows the daily report
+(define-key global-map (kbd "<f6>") 'tc/show-daily-report)
 
 ;; In the daily report calendar view, f6 format the report
 (define-key org-agenda-mode-map (kbd "<f6>") 'tc/mk-daily-report)
