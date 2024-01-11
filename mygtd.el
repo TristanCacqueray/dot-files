@@ -13,10 +13,10 @@
 (setq org-icalendar-timezone "America/New_York")
 
 (setq-default org-default-notes-file "~/org/gtd.org.gpg")
-(setq tc/org-reviews-files '("~/org/gtd.org.gpg" "~/org/gtd_archive.gpg"))
+(setq tc/org-reviews-files '("~/org/gtd.org.gpg"))
 
 ;; Look for agenda item in these files
-(setq-default org-agenda-files '("~/org/gtd.org.gpg" "~/org/agenda.org.gpg"))
+(setq-default org-agenda-files '("~/org/gtd.org.gpg"))
 
 (use-package org
   :config
@@ -119,12 +119,7 @@
            "* %?\n")
           ))
 
-  (defun tc/org-capture-todo ()
-    (interactive)
-    (call-interactively 'org-store-link)
-    (org-capture nil "t"))
-
-  (define-key global-map (kbd "<f5>") 'tc/org-capture-todo)
+  (define-key global-map (kbd "<f5>") (lambda () (interactive) (org-capture nil "t")))
 
   (defun tc/org-capture-done ()
     (interactive)
@@ -251,17 +246,17 @@
 
 (defun tc/daily-format (items)
   "Format all ITEMS."
-  (let ((today (format-time-string "%Y-%m-%d")))
-    (s-unlines (cons today (cons "" (cons "tdecacqu:" (mapcar 'tc/daily-format-item items)))))
-    )
-  )
+  (let ((today (format-time-string "*** %Y-%m-%d %A"))
+        (report (mapcar 'tc/daily-format-item items)))
+    (format "%s\n%s:\n%s" today "tdecacqu" (s-unlines report))))
 
 (defun tc/mk-daily-query ()
+  "The daily query."
   ;; TODO: make that one day during the week
   '(and (or (todo "DONE") (todo "NEXT")) (ts :from -3 :to today)))
 
 (defun tc/mk-review-query ()
-  ;; TODO: make that one day during the week
+  "The review query."
   '(and (or (todo "DONE") (todo "NEXT")) (ts :from -21 :to today)))
 
 (defun tc/show-daily-report ()
@@ -279,6 +274,14 @@ This is like org-ql--date< but considering closed date too."
                        (org-element-property :scheduled ,item))))
     (org-ql--org-timestamp-element< (ts a) (ts b))))
 
+(defun tc/compare-cat-entry (a b)
+  (cl-macrolet ((cat (item)
+                  `(or
+                    (org-element-property :category ,item))))
+    (string< (cat a) (cat b))))
+
+
+;; TODO: append the report to the journal (e.g. running org-capture "j")
 (defun tc/mk-daily-report ()
   "Produce a report for team daily."
   (interactive)
@@ -309,24 +312,24 @@ This is like org-ql--date< but considering closed date too."
   (org-ql-search tc/org-reviews-files (tc/mk-review-query)
     :super-groups '((:auto-category))))
 
-(defun tc/compare-cat-entry (a b)
-  (cl-macrolet ((cat (item)
-                  `(or
-                    (org-element-property :category ,item))))
-    (string< (cat a) (cat b))))
-
 (defun tc/monthly-format-item (acc item)
+  "Format an entry for the review.
+ACC is tuple of current content and category string.
+ITEM is an org entry."
   (let* ((properties (cadr item))
          (prev-cat (cadr acc))
          (content (car acc))
          (category (tc/get-cat properties))
-         (cat-sep (if (string= category prev-cat) "" (format "\n\n# %s" category)))
+         (cat-sep (if (string= category prev-cat) ""
+                    (format "%s\n# %s" (if prev-cat "\n" "") category)))
          (title (plist-get properties :raw-value)))
     (list (format "%s%s\n- %s" content cat-sep (tc/remove-links title)) category)))
 
 (defun tc/monthly-format (items)
   "Format all ITEMS."
-  (car (seq-reduce 'tc/monthly-format-item items '("" nil))))
+  (let ((report (car (seq-reduce 'tc/monthly-format-item items '("" nil)))))
+    ;; todo: compute the date of 3 weeks ago
+    (format "**** Sprint review (from )\n%s" report)))
 
 (defun tc/mk-review-report ()
   "Produce a report for team review."
