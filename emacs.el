@@ -144,9 +144,9 @@
 ;; Create project name based id
 (defun project-id (suffix)
   (let ((pname
-         (if (string= default-directory "~/")
-             (getenv "USER") (projectile-project-name)
-             )))
+         (cond ((string= default-directory "~/") (getenv "USER"))
+               ((string= default-directory "/home/fedora/") "fedora")
+               (t (projectile-project-name)))))
     (concat pname "-" suffix)))
 
 
