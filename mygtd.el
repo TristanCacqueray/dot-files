@@ -229,16 +229,19 @@
 (defun tc/remove-links (s)
   (s-trim (s-replace-regexp "\\[\\[.*\\]\\]" "" s)))
 
+(defun tc/get-cat (properties)
+(or (org-entry-get (plist-get properties :org-marker) "ARCHIVE_CATEGORY")
+                       (org-entry-get (plist-get properties :org-marker) "CATEGORY")))
+
 (defun tc/daily-format-item (item)
   "Format 'org-ql-select' output. ITEM is a prop list."
   (let* ((properties (cadr item))
          (title (plist-get properties :raw-value))
          (status (plist-get properties :todo-keyword))
          (status-str (if (string= status "DONE") "" (concat status ": ")))
-         (category (or (org-entry-get (plist-get properties :org-marker) "ARCHIVE_CATEGORY")
-                       (org-entry-get (plist-get properties :org-marker) "CATEGORY")))
+         (category (tc/get-cat properties))
          )
-    (format "* %s - %s%s" (s-pad-left 9 " " category) status-str (tc/remove-links title))))
+    (format "- %s - %s%s" (s-pad-left 9 " " category) status-str (tc/remove-links title))))
 
 (defun tc/daily-format (items)
   "Format all ITEMS."
@@ -254,12 +257,6 @@
 (defun tc/mk-review-query ()
   ;; TODO: make that one day during the week
   '(and (or (todo "DONE") (todo "NEXT")) (ts :from -21 :to today)))
-
-(defun tc/show-review-report ()
-  "Show daily report."
-  (interactive)
-  (org-ql-search "~/org/gtd.org.gpg" (tc/mk-review-query)
-    :super-groups '((:category))))
 
 (defun tc/show-daily-report ()
   "Show daily report."
@@ -286,6 +283,55 @@ This is like org-ql--date< but considering closed date too."
                     ))
          (report (tc/daily-format entries))
          (*buffer* (get-buffer-create "*tc/daily*")))
+    (with-current-buffer *buffer*
+      (erase-buffer)
+      (insert report)
+      (set-text-properties (point-min) (point-max) nil)
+      ;; move the cursor at begining of entries
+      (goto-char (point-min))
+      (forward-line 2)
+      (cl-dolist (window (get-buffer-window-list nil nil t))
+        (set-window-point window (point)))
+      )
+    (switch-to-buffer-other-window *buffer*)
+    )
+  )
+
+(defun tc/show-review-report ()
+  "Show daily report."
+  (interactive)
+  (org-ql-search tc/org-reviews-files (tc/mk-review-query)
+    :super-groups '((:auto-category))))
+
+(defun tc/compare-cat-entry (a b)
+  (cl-macrolet ((cat (item)
+                  `(or
+                    (org-element-property :category ,item))))
+    (string< (cat a) (cat b))))
+
+(defun tc/monthly-format-item (acc item)
+  (let* ((properties (cadr item))
+         (prev-cat (cadr acc))
+         (content (car acc))
+         (category (tc/get-cat properties))
+         (cat-sep (if (string= category prev-cat) "" (format "\n\n# %s" category)))
+         (title (plist-get properties :raw-value)))
+    (list (format "%s%s\n- %s" content cat-sep (tc/remove-links title)) category)))
+
+(defun tc/monthly-format (items)
+  "Format all ITEMS."
+  (car (seq-reduce 'tc/monthly-format-item items '("" nil))))
+
+(defun tc/mk-review-report ()
+  "Produce a report for team review."
+  (interactive)
+  (let* ((entries (org-ql-select tc/org-reviews-files
+                    (tc/mk-review-query)
+                    :action 'element-with-markers
+                    :sort 'tc/compare-cat-entry
+                    ))
+         (report (tc/monthly-format entries))
+         (*buffer* (get-buffer-create "*tc/review*")))
     (with-current-buffer *buffer*
       (erase-buffer)
       (insert report)
