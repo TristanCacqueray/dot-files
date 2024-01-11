@@ -235,7 +235,8 @@
          (title (plist-get properties :raw-value))
          (status (plist-get properties :todo-keyword))
          (status-str (if (string= status "DONE") "" (concat status ": ")))
-         (category (org-entry-get (plist-get properties :org-marker) "CATEGORY"))
+         (category (or (org-entry-get (plist-get properties :org-marker) "ARCHIVE_CATEGORY")
+                       (org-entry-get (plist-get properties :org-marker) "CATEGORY")))
          )
     (format "* %s - %s%s" (s-pad-left 9 " " category) status-str (tc/remove-links title))))
 
