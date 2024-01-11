@@ -226,12 +226,18 @@
     )
   )
 
+(defun tc/todo-list ()
+  "Improve org-todo-list."
+  (interactive)
+  (org-ql-search tc/org-reviews-files '(or (todo "WAITING") (todo "TODO"))
+    :super-groups '((:auto-category))))
+
 (defun tc/remove-links (s)
   (s-trim (s-replace-regexp "\\[\\[.*\\]\\]" "" s)))
 
 (defun tc/get-cat (properties)
-(or (org-entry-get (plist-get properties :org-marker) "ARCHIVE_CATEGORY")
-                       (org-entry-get (plist-get properties :org-marker) "CATEGORY")))
+  (or (org-entry-get (plist-get properties :org-marker) "ARCHIVE_CATEGORY")
+      (org-entry-get (plist-get properties :org-marker) "CATEGORY")))
 
 (defun tc/daily-format-item (item)
   "Format 'org-ql-select' output. ITEM is a prop list."
@@ -298,7 +304,7 @@ This is like org-ql--date< but considering closed date too."
   )
 
 (defun tc/show-review-report ()
-  "Show daily report."
+  "Show report report."
   (interactive)
   (org-ql-search tc/org-reviews-files (tc/mk-review-query)
     :super-groups '((:auto-category))))
