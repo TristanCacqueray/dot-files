@@ -256,6 +256,37 @@
         (report (mapcar 'tc/daily-format-item items)))
     (format "%s\n%s:\n%s" today "tdecacqu" (s-unlines report))))
 
+(defun tc/mk-next-meeting-query ()
+  "The next meeting query."
+  '(and (not (or (todo "DONE") (todo "CANCELLED"))) (scheduled :from now)))
+
+(defun tc/get-next-meeting ()
+  (org-ql-search '("~/org/gtd.org.gpg" "~/org/agenda.org.gpg") (tc/mk-next-meeting-query)
+    :sort '(date)))
+
+(defun tc/sched-format (item)
+  (let* ((properties (cadr item))
+         (title (plist-get properties :raw-value))
+         (scheduled (plist-get properties :scheduled))
+         (ts (format-time-string "%FT%T%z" (org-timestamp-to-time scheduled)))
+         )
+    (format "%s %s" ts (tc/remove-links title))))
+
+(defun not-habits (item)
+  (let* ((properties (cadr item))
+         (style (plist-get properties :STYLE)))
+    (not (string= style "habit"))))
+
+(defun tc/render-org-next-events ()
+  (let* ((entries (org-ql-select '("~/org/gtd.org.gpg" "~/org/agenda.org.gpg") (tc/mk-next-meeting-query)
+                    :action 'element-with-markers
+                    :sort 'tc/compare-entry
+                    ))
+         (report (s-unlines (reverse (mapcar 'tc/sched-format (seq-filter 'not-habits entries))))))
+    (f-write-text report 'utf-8 "~/.local/share/gnome-org-next-schedule/events")
+    )
+  )
+
 (defun tc/mk-daily-query ()
   "The daily query."
   ;; TODO: make that one day during the week
