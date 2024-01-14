@@ -123,7 +123,6 @@
 
   (defun tc/org-capture-done ()
     (interactive)
-    (call-interactively 'org-store-link)
     (org-capture nil "d"))
 
   (define-key global-map (kbd "<f8>") 'tc/org-capture-done)
@@ -160,6 +159,13 @@
                 (todo   . " ")
                 (tags   . " %i %-12:c")
                 (search . " %i %-12:c")))
+
+(setq org-habit-following-days 7
+      org-habit-preceding-days 35
+      org-habit-show-habits t)
+
+;; Toggle to show all habits ;; todo: make that into a view
+(setq org-habit-show-all-today nil)
 
 (setq-default org-agenda-custom-commands
               '(("g" "Get Things Done (GTD)"
