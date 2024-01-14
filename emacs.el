@@ -529,5 +529,8 @@ typical word processor."
     (when (fboundp 'writeroom-mode)
       (writeroom-mode 0))))
 
+;; purescript use flycheck
+(define-key purescript-mode-map (kbd "<f3>") 'flycheck-next-error)
+
 (provide 'init)
 ;;; emacs ends here
