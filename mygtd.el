@@ -10,13 +10,16 @@
 
 (require 'org-ql)
 
+;; Unfortunately org-mode does not support timestamp with timezone, so this ensure correct format on export.
 (setq org-icalendar-timezone "America/New_York")
 
-(setq-default org-default-notes-file "~/org/gtd.org.gpg")
-(setq tc/org-reviews-files '("~/org/gtd.org.gpg"))
+;; Files
+(setq tc/org-reviews-files '("~/org/projects.org.gpg"))
+(setq tc/inbox "~/org/inbox.org.gpg")
+(setq tc/journal "~/org/journal.org.gpg")
 
 ;; Look for agenda item in these files
-(setq-default org-agenda-files '("~/org/gtd.org.gpg"))
+(setq-default org-agenda-files '("~/org/projects.org.gpg" "~/org/home.org.gpg" "~/org/inbox.org.gpg"))
 
 (use-package org
   :config
@@ -111,11 +114,11 @@
   (setq org-refile-use-cache nil)
   (setq org-capture-templates
         '(
-          ("t" "todo" entry (file+headline "~/org/gtd.org.gpg" "Inbox")
+          ("t" "todo" entry (file tc/inbox)
            "* TODO %?\n/Entered on/ %U\n")
-          ("d" "done" entry (file+headline "~/org/gtd.org.gpg" "Inbox")
+          ("d" "done" entry (file tc/inbox)
            "* DONE %?\nCLOSED: %U\n")
-          ("j" "Journal" entry (file+olp+datetree "~/org/journal.org.gpg")
+          ("j" "Journal" entry (file+olp+datetree tc/journal)
            "* %?\n")
           ))
 
@@ -258,10 +261,10 @@
 
 (defun tc/mk-next-meeting-query ()
   "The next meeting query."
-  '(and (not (or (todo "DONE") (todo "CANCELLED"))) (scheduled :from now)))
+  '(and (not (done)) (not (habit)) (scheduled :from ,(ts-now))))
 
 (defun tc/get-next-meeting ()
-  (org-ql-search '("~/org/gtd.org.gpg" "~/org/agenda.org.gpg") (tc/mk-next-meeting-query)
+  (org-ql-search org-agenda-files (tc/mk-next-meeting-query)
     :sort '(date)))
 
 (defun tc/sched-format (item)
@@ -272,17 +275,12 @@
          )
     (format "%s %s" ts (tc/remove-links title))))
 
-(defun not-habits (item)
-  (let* ((properties (cadr item))
-         (style (plist-get properties :STYLE)))
-    (not (string= style "habit"))))
-
 (defun tc/render-org-next-events ()
-  (let* ((entries (org-ql-select '("~/org/gtd.org.gpg" "~/org/agenda.org.gpg") (tc/mk-next-meeting-query)
+  (let* ((entries (org-ql-select org-agenda-files (tc/mk-next-meeting-query)
                     :action 'element-with-markers
                     :sort 'tc/compare-entry
                     ))
-         (report (s-unlines (reverse (mapcar 'tc/sched-format (seq-filter 'not-habits entries))))))
+         (report (s-unlines (reverse (mapcar 'tc/sched-format entries)))))
     (f-write-text report 'utf-8 "~/.local/share/gnome-org-next-schedule/events")
     )
   )
