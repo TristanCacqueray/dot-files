@@ -275,15 +275,23 @@
          )
     (format "%s %s" ts (tc/remove-links title))))
 
-(defun tc/render-org-next-events ()
+
+(defvar tc/schedule-events ""
+  "The last schedule render to update the files when it changes.")
+
+(defun tc/render-schedule-events ()
+  "Render the events for gnome-org-next-schedule."
   (let* ((entries (org-ql-select org-agenda-files (tc/mk-next-meeting-query)
                     :action 'element-with-markers
                     :sort 'tc/compare-entry
                     ))
          (report (s-unlines (reverse (mapcar 'tc/sched-format entries)))))
-    (f-write-text report 'utf-8 "~/.local/share/gnome-org-next-schedule/events")
-    )
-  )
+    (when (not (string= report tc/schedule-events))
+      (setq tc/schedule-events report)
+      (f-write-text report 'utf-8 "~/.local/share/gnome-org-next-schedule/events"))))
+
+;; Update schedule events when the agenda is displayed
+(add-hook 'org-agenda-mode-hook 'tc/render-schedule-events)
 
 (defun tc/mk-daily-query ()
   "The daily query."
