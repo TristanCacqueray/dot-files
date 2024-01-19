@@ -151,14 +151,13 @@
 
 
 ;; function to start shell
-(defun pshell ()
-  (interactive)
-  (let ((*buffer* (get-buffer-create (concat "*" (project-id "shell") "*"))))
+(defun tc/pshell (suffix)
+  (let ((*buffer* (get-buffer-create (concat "*" (project-id "shell") suffix "*"))))
     (if (get-buffer-process *buffer*)
         (switch-to-buffer-other-window *buffer*)
-      (shell *buffer*))
-    ))
-(global-set-key (kbd "<f1>") 'pshell)
+      (shell *buffer*))))
+(global-set-key (kbd "<f1>") (lambda () (interactive) (tc/pshell "")))
+(global-set-key (kbd "<f2>") (lambda () (interactive) (tc/pshell "-sec")))
 
 ;; haskell helper
 (defun project-hoogle ()
