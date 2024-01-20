@@ -466,6 +466,7 @@ Version: 2020-06-26 2023-09-19 2023-10-29"
 
 
 (use-package helpful
+  :disabled ;; helpful is quite slow
   :config
 ;; Note that the built-in `describe-function' includes both functions
 ;; and macros. `helpful-function' is functions only, so we provide
