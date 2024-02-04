@@ -14,13 +14,13 @@
 (setq org-icalendar-timezone "America/New_York")
 
 ;; Files
-(setq tc/org-reviews-files '("~/org/projects.org.gpg"))
+(setq org-report-files '("~/org/projects.org.gpg"))
 (setq tc/inbox "~/org/inbox.org.gpg")
 (setq tc/journal "~/org/journal.org.gpg")
 
 ;; Look for agenda item in these files
-(setq-default org-agenda-files '("~/org/projects.org.gpg" "~/org/home.org.gpg" "~/org/inbox.org.gpg"))
-
+(setq org-agenda-files '("~/org/projects.org.gpg" "~/org/home.org.gpg" "~/org/inbox.org.gpg"))
+(debug-watch 'org-agenda-files)
 (use-package org
   :config
   (setq-default
@@ -196,212 +196,16 @@
     )
   )
 
-(defun s-unlines (xs)
-  "The inverse of 's-lines'."
-  (s-join "\n" xs))
-
-;;; remove elem when f return true
-(defun tc/drop (f xs)
-  "The inverse of 'seq-filter'."
-  (seq-filter (lambda (s) (not (funcall f s))) xs))
-
-(progn
-  "First attempt at creating daily report by processing the agenda view buffer"
-  (defun tc/get-done (line)
-    "Match closed line and return a formated string"
-    (if-let ((show (lambda (cat ev) (s-join " " (list "**" (s-pad-left 13 " " cat) "-" (tc/remove-links ev)))))
-             (match (s-match-strings-all "^ *\\([^:]+\\): .* Closed: .* DONE \\(.*\\)$" line))
-             )
-        (apply show (cdr (car match)))
-      )
-    )
-  (defun tc/is-org-date (line)  (s-match "[A-Z][a-z]+ *[0-9]+ [A-Z][a-z]+ [0-9]+.*" line))
-
-  (defun tc/process-agenda (line) (if (tc/is-org-date line) line (tc/get-done line)))
-
-  (defun tc/daily-report ()
-    "Produce a report for team daily"
-    (let* (
-           (lines (s-lines (tc/get-buffer-content)))
-           (events (tc/drop 's-blank? (mapcar 'tc/process-agenda lines)))
-           )
-      (message (s-unlines events))
-      )
-    )
-  )
-
-(defun tc/todo-list ()
-  "Improve org-todo-list."
-  (interactive)
-  (org-ql-search tc/org-reviews-files '(or (todo "WAITING") (todo "TODO"))
-    :super-groups '((:auto-category))))
-
-(defun tc/remove-links (s)
-  (s-trim (s-replace-regexp "\\[\\[.*\\]\\]" "" s)))
-
-(defun tc/get-cat (properties)
-  (or (org-entry-get (plist-get properties :org-marker) "ARCHIVE_CATEGORY")
-      (org-entry-get (plist-get properties :org-marker) "CATEGORY")))
-
-(defun tc/daily-format-item (item)
-  "Format 'org-ql-select' output. ITEM is a prop list."
-  (let* ((properties (cadr item))
-         (title (plist-get properties :raw-value))
-         (status (plist-get properties :todo-keyword))
-         (status-str (if (string= status "DONE") "" (concat status ": ")))
-         (category (tc/get-cat properties))
-         )
-    (format "- %s - %s%s" (s-pad-left 9 " " category) status-str (tc/remove-links title))))
-
-(defun tc/daily-format (items)
-  "Format all ITEMS."
-  (let ((today (format-time-string "*** %Y-%m-%d %A"))
-        (report (mapcar 'tc/daily-format-item items)))
-    (format "%s\n%s:\n%s" today "tdecacqu" (s-unlines report))))
-
-(defun tc/mk-next-meeting-query ()
-  "The next meeting query."
-  '(and (not (done)) (not (habit)) (scheduled :from ,(ts-now))))
-
-(defun tc/get-next-meeting ()
-  (org-ql-search org-agenda-files (tc/mk-next-meeting-query)
-    :sort '(date)))
-
-(defun tc/sched-format (item)
-  (let* ((properties (cadr item))
-         (title (plist-get properties :raw-value))
-         (scheduled (plist-get properties :scheduled))
-         (ts (format-time-string "%FT%T%z" (org-timestamp-to-time scheduled)))
-         )
-    (format "%s %s" ts (tc/remove-links title))))
-
-
-(defvar tc/schedule-events ""
-  "The last schedule render to update the files when it changes.")
-
-(defun tc/render-schedule-events ()
-  "Render the events for gnome-org-next-schedule."
-  (let* ((entries (org-ql-select org-agenda-files (tc/mk-next-meeting-query)
-                    :action 'element-with-markers
-                    :sort 'tc/compare-entry
-                    ))
-         (report (s-unlines (reverse (mapcar 'tc/sched-format entries)))))
-    (when (not (string= report tc/schedule-events))
-      (setq tc/schedule-events report)
-      (f-write-text report 'utf-8 "~/.local/share/gnome-org-next-schedule/events"))))
-
+(add-to-list 'load-path "/srv/github.com/TristanCacqueray/emacs-toolbox")
 ;; Update schedule events when the agenda is displayed
-(add-hook 'org-agenda-mode-hook 'tc/render-schedule-events)
+(require 'org-next-event)
+(add-hook 'org-agenda-mode-hook 'org-next-event-render)
 
-(defun tc/mk-daily-query ()
-  "The daily query."
-  ;; TODO: make that one day during the week
-  '(and (or (todo "DONE") (todo "NEXT")) (ts :from -3 :to today)))
-
-(defun tc/mk-review-query ()
-  "The review query."
-  '(and (or (todo "DONE") (todo "NEXT")) (ts :from -21 :to today)))
-
-(defun tc/show-daily-report ()
-  "Show daily report."
-  (interactive)
-  (org-ql-search tc/org-reviews-files (tc/mk-daily-query)
-    :super-groups '((:auto-ts t))))
-
-(defun tc/compare-entry (b a)
-  "Order entry A and B so that they appears from newest to oldest.
-This is like org-ql--date< but considering closed date too."
-  (cl-macrolet ((ts (item)
-                  `(or (org-element-property :closed ,item)
-                       (org-element-property :deadline ,item)
-                       (org-element-property :scheduled ,item))))
-    (org-ql--org-timestamp-element< (ts a) (ts b))))
-
-(defun tc/compare-cat-entry (a b)
-  (cl-macrolet ((cat (item)
-                  `(or
-                    (org-element-property :category ,item))))
-    (string< (cat a) (cat b))))
-
-
-;; TODO: append the report to the journal (e.g. running org-capture "j")
-(defun tc/mk-daily-report ()
-  "Produce a report for team daily."
-  (interactive)
-  (let* ((entries (org-ql-select tc/org-reviews-files
-                    (tc/mk-daily-query)
-                    :action 'element-with-markers
-                    :sort 'tc/compare-entry
-                    ))
-         (report (tc/daily-format entries))
-         (*buffer* (get-buffer-create "*tc/daily*")))
-    (with-current-buffer *buffer*
-      (erase-buffer)
-      (insert report)
-      (set-text-properties (point-min) (point-max) nil)
-      ;; move the cursor at begining of entries
-      (goto-char (point-min))
-      (forward-line 2)
-      (cl-dolist (window (get-buffer-window-list nil nil t))
-        (set-window-point window (point)))
-      )
-    (switch-to-buffer-other-window *buffer*)
-    )
-  )
-
-(defun tc/show-review-report ()
-  "Show report report."
-  (interactive)
-  (org-ql-search tc/org-reviews-files (tc/mk-review-query)
-    :super-groups '((:auto-category))))
-
-(defun tc/monthly-format-item (acc item)
-  "Format an entry for the review.
-ACC is tuple of current content and category string.
-ITEM is an org entry."
-  (let* ((properties (cadr item))
-         (prev-cat (cadr acc))
-         (content (car acc))
-         (category (tc/get-cat properties))
-         (cat-sep (if (string= category prev-cat) ""
-                    (format "%s\n# %s" (if prev-cat "\n" "") category)))
-         (title (plist-get properties :raw-value)))
-    (list (format "%s%s\n- %s" content cat-sep (tc/remove-links title)) category)))
-
-(defun tc/monthly-format (items)
-  "Format all ITEMS."
-  (let ((report (car (seq-reduce 'tc/monthly-format-item items '("" nil)))))
-    ;; todo: compute the date of 3 weeks ago
-    (format "**** Sprint review (from )\n%s" report)))
-
-(defun tc/mk-review-report ()
-  "Produce a report for team review."
-  (interactive)
-  (let* ((entries (org-ql-select tc/org-reviews-files
-                    (tc/mk-review-query)
-                    :action 'element-with-markers
-                    :sort 'tc/compare-cat-entry
-                    ))
-         (report (tc/monthly-format entries))
-         (*buffer* (get-buffer-create "*tc/review*")))
-    (with-current-buffer *buffer*
-      (erase-buffer)
-      (insert report)
-      (set-text-properties (point-min) (point-max) nil)
-      ;; move the cursor at begining of entries
-      (goto-char (point-min))
-      (forward-line 2)
-      (cl-dolist (window (get-buffer-window-list nil nil t))
-        (set-window-point window (point)))
-      )
-    (switch-to-buffer-other-window *buffer*)
-    )
-  )
-
+(require 'org-report)
 ;; From anywhere, f6 shows the daily report
-(define-key global-map (kbd "<f6>") 'tc/show-daily-report)
+(define-key global-map (kbd "<f6>") 'org-report-daily-show)
 
 ;; In the daily report calendar view, f6 format the report
-(define-key org-agenda-mode-map (kbd "<f6>") 'tc/mk-daily-report)
+(define-key org-agenda-mode-map (kbd "<f6>") 'org-report-daily)
 
 (provide 'mygtd)
