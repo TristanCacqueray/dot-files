@@ -208,4 +208,7 @@
 ;; In the daily report calendar view, f6 format the report
 (define-key org-agenda-mode-map (kbd "<f6>") 'org-report-daily)
 
+;; Make sure the org is saved
+(advice-add 'org-refile :after (lambda (&rest _) (org-save-all-org-buffers)))
+
 (provide 'mygtd)
