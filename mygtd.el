@@ -14,7 +14,7 @@
 (setq org-icalendar-timezone "America/New_York")
 
 ;; Files
-(setq org-report-files '("~/org/projects.org.gpg"))
+(setq org-report-files '("~/org/projects.org.gpg" "~/org/jira.org"))
 (setq tc/inbox "~/org/inbox.org.gpg")
 (setq tc/journal "~/org/journal.org.gpg")
 
