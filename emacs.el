@@ -36,7 +36,7 @@
 (setenv "EDITOR" "emacsclient")
 
 ;; disable magit-status pop-up
-(setq-default magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1)
+;; (setq-default magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1)
 
 ;; M-l counsel-git-grep
 (global-set-key  (kbd "M-l") 'counsel-git-grep)
@@ -531,6 +531,7 @@ typical word processor."
 
 ;; purescript use flycheck
 (define-key purescript-mode-map (kbd "<f3>") 'flycheck-next-error)
+
 
 (provide 'init)
 ;;; emacs ends here
