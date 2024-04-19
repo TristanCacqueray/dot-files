@@ -109,6 +109,9 @@ function gnome {
     gsettings set org.gnome.desktop.wm.preferences audible-bell false
     gsettings set org.gnome.desktop.interface cursor-blink false
 
+    log "Disable animation"
+    gsettings set org.gnome.desktop.interface enable-animations false
+
     log "Replace caps-lock with control"
     gsettings set org.gnome.desktop.input-sources xkb-options "['caps:ctrl_modifier']"
 
