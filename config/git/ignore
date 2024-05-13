@@ -76,6 +76,9 @@ _checkouts/
 *.bs.js
 .bsb.lock
 
+# rescript
+*.res.js
+
 # node
 node_modules/
 web_modules/
