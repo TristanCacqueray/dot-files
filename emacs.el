@@ -532,6 +532,8 @@ typical word processor."
 ;; purescript use flycheck
 (define-key purescript-mode-map (kbd "<f3>") 'flycheck-next-error)
 
+;; ignore code block in spellcheck
+(add-to-list 'ispell-skip-region-alist '("^```" . "```$"))
 
 (provide 'init)
 ;;; emacs ends here
