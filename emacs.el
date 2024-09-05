@@ -9,6 +9,7 @@
  mime-edit-pgp-signers '("EB103DE8B5E69E631C6FF17922B9A05C925CC5D8")
  auth-sources '("~/.authinfo.gpg"))
 
+;; Display the current date in the modeline
 (setq mode-line-right-align-edge 'right-margin)
 (setq-default mode-line-format
               '("%e" mode-line-front-space
@@ -26,14 +27,10 @@
 (setq-default display-time-format "%Y-%m-%d %a %H:%M")
 (display-time-mode)
 
-;; (use-package org-alert
-;;   :ensure t
-;;   :config
-;;   (setq-default alert-default-style 'libnotify)
-;;   (org-alert-enable)
-;; )
-
-(setenv "EDITOR" "emacsclient")
+;; Start the server and setup the EDITOR
+(unless (server-running-p)
+  (server-start)
+  (setenv "EDITOR" "emacsclient"))
 
 ;; disable magit-status pop-up
 ;; (setq-default magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1)
@@ -49,9 +46,6 @@
 (global-set-key (kbd "C-<insert>") 'simpleclip-copy)
 (global-set-key (kbd "M-<insert>") 'simpleclip-paste)
 
-;; C-, to yank
-(global-set-key (kbd "C-,") 'yank)
-
 ;; Unbind C-t for tmux
 (global-unset-key (kbd "C-t"))
 
@@ -59,7 +53,6 @@
 (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
 (global-set-key (kbd "C->") 'mc/mark-next-like-this)
 (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
-(global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
 
 ;; easier to access undo
 (global-set-key (kbd "M-u") 'undo)
@@ -67,12 +60,19 @@
 ;; avy
 (global-set-key (kbd "M-g d") 'avy-goto-char-timer)
 
-;; enable standard linux unicode input
-(defun read-unicode-char (c1 c2 c3 c4 _trailing_space_ignored)
-  "Convert unicode input C1 C2 C3 C4 to the corresponding insert char call."
-  (interactive "c\nc\nc\nc\nc")
-  (insert-char (string-to-number (format "%c%c%c%c" c1 c2 c3 c4) 16)))
-(define-key global-map (kbd "C-S-u") 'read-unicode-char)
+;; Ace navigation
+(global-set-key (kbd "M-o") 'ace-window)
+(global-set-key (kbd "M-g l") 'avy-goto-line)
+(global-set-key (kbd "M-g w") 'avy-goto-word-1)
+(global-set-key (kbd "M-g e") 'avy-goto-word-0)
+
+(when (display-graphic-p)
+  ;; enable standard linux unicode input
+  (defun read-unicode-char (c1 c2 c3 c4 _trailing_space_ignored)
+    "Convert unicode input C1 C2 C3 C4 to the corresponding insert char call."
+    (interactive "c\nc\nc\nc\nc")
+    (insert-char (string-to-number (format "%c%c%c%c" c1 c2 c3 c4) 16)))
+  (define-key global-map (kbd "C-S-u") 'read-unicode-char))
 
 ;; improve vt rendering
 (when (string-equal (getenv "TERM") "xterm-256color")
@@ -81,48 +81,12 @@
 ;; disable eletric indent
 (electric-indent-mode -1)
 
-;; enable quality of life ghc extensions
-(setq haskell-language-extensions (list
-                                   "-XBangPatterns"
-                                   "-XBinaryLiterals"
-                                   "-XDataKinds"
-                                   "-XDeriveGeneric"
-                                   "-XDerivingStrategies"
-                                   "-XExplicitForAll"
-                                   "-XFlexibleInstances"
-                                   "-XGeneralizedNewtypeDeriving"
-                                   "-XHexFloatLiterals"
-                                   "-XImportQualifiedPost"
-                                   "-XLambdaCase"
-                                   "-XMultiWayIf"
-                                   "-XNamedFieldPuns"
-                                   "-XNamedWildCards"
-                                   "-XNumDecimals"
-                                   "-XNumericUnderscores"
-                                   "-XOverloadedStrings"
-                                   "-XPostfixOperators"
-                                   "-XRecordWildCards"
-                                   "-XScopedTypeVariables"
-                                   "-XStandaloneDeriving"
-                                   "-XTupleSections"
-                                   "-XTypeOperators"
-                                   ))
-(setq flycheck-ghc-args haskell-language-extensions)
-
-
 ;; Start magit-status when switching project
 (require 'projectile)
-(setq-default
- projectile-switch-project-action (quote magit-status))
+(setq-default projectile-switch-project-action 'magit-status)
 
-;; Ace navigation
-(global-set-key (kbd "M-o") 'ace-window)
-(global-set-key (kbd "M-g l") 'avy-goto-line)
-(global-set-key (kbd "M-g w") 'avy-goto-word-1)
-(global-set-key (kbd "M-g e") 'avy-goto-word-0)
-
-;; Start a process in a buffer with ansi colors
 (defun start-worker-process (name program &rest args)
+  "Start a process PROGRAM in a buffer NAME with ansi colors."
   (let ((buffer-name (concat "*" name "*")))
     (message "Starting %s %s" buffer-name program)
     (let ((*buffer* (get-buffer-create buffer-name)))
@@ -135,23 +99,27 @@
             (comint-mode)
             (set-process-filter *proc* 'comint-output-filter)
             )))
-      (switch-to-buffer-other-window *buffer*)
-      )))
+      (switch-to-buffer-other-window *buffer*))))
 
 (defun start-nix-worker-process (name command)
   (start-worker-process name "nix-shell" "--command" command))
 
-;; Create project name based id
+(defun tc/project-name ()
+  "Get the project root dir name and it's parent directory."
+  (let ((path (project-root (project-current))))
+    (f-join (f-filename (f-dirname path)) (f-filename path))))
+
 (defun project-id (suffix)
+  "Make a buffer name based on the project name - SUFFIX."
   (let ((pname
          (cond ((string= default-directory "~/") (getenv "USER"))
                ((string= default-directory "/home/fedora/") "fedora")
-               (t (projectile-project-name)))))
+               (t (tc/project-name)))))
     (concat pname "-" suffix)))
 
 
-;; function to start shell
 (defun tc/pshell (suffix)
+  "Start a shell for the given project with a buffer named with SUFFIX."
   (let ((*buffer* (get-buffer-create (concat "*" (project-id "shell") suffix "*"))))
     (if (get-buffer-process *buffer*)
         (switch-to-buffer-other-window *buffer*)
@@ -159,25 +127,12 @@
 (global-set-key (kbd "<f1>") (lambda () (interactive) (tc/pshell "")))
 (global-set-key (kbd "<f2>") (lambda () (interactive) (tc/pshell "-sec")))
 
-;; haskell helper
-(defun project-hoogle ()
-  (interactive)
-  (start-nix-worker-process (project-id "hoogle") "hoogle server -p 8080 --local --haskell"))
-
-;; reason helper
-(defun pnpm-start ()
-  (interactive)
-  (start-worker-process (project-id "pnpm-start") "pnpm" "run" "start"))
-
-(defun pnpm-serve ()
-  (interactive)
-  (start-worker-process (project-id "pnpm-serve") "sh" "-c" "pnpm run build && pnpm run serve"))
-
 (defun get-newest-file-from-dir  (path)
+  "Return the latest file in PATH."
   (car (directory-files path 'full nil #'file-newer-than-file-p)))
 
 (defun copy-screenshot-markdown (name)
-  "Copy latest screenshot and insert markdown link"
+  "Copy latest screenshot and insert markdown link with NAME."
   (interactive "Mname: ")
   (let* ((infile (expand-file-name (get-newest-file-from-dir "~/Pictures/Screenshots")))
          (outdir (concat (file-name-directory (buffer-file-name)) "/media"))
@@ -192,19 +147,22 @@
 
 ;; better comint
 (defun turn-on-comint-history ()
+  "Save comint history per buffer."
   (let ((process (get-buffer-process (current-buffer))))
     (when process
       (mkdir (concat user-emacs-directory "comint-history") t)
       (setq comint-input-ring-file-name
-            (expand-file-name (format (concat user-emacs-directory "comint-history/%s")
-                                      (replace-regexp-in-string "\*" "" (buffer-name (current-buffer))))))
+            (expand-file-name (concat user-emacs-directory "comint-history/"
+                                      (string-replace "/" "_" (string-replace "*" "" (buffer-name (current-buffer)))))))
       (message "buffer history: %s" comint-input-ring-file-name)
       (comint-read-input-ring t)
       (add-hook 'kill-buffer-hook 'comint-write-history-on-exit nil :local))))
+
 (defun comint-write-history-on-exit ()
-  ;; debug
+  "Write the comint history."
   (message "Writting %s" comint-input-ring-file-name)
   (comint-write-input-ring))
+
 (use-package comint
   :defer t
   :config
@@ -218,12 +176,13 @@
             (with-current-buffer buffer
               (comint-write-history-on-exit)))
           (buffer-list)))
-  (add-hook 'kill-emacs-hook 'comint-write-input-ring-all-buffers)
-  )
+  (add-hook 'kill-emacs-hook 'comint-write-input-ring-all-buffers))
 
 ;; a git clone helper
 (defun parse-git-url (url)
   (url-generic-parse-url url))
+
+(setq tc/git-root-dir (if (f-writable-p "/srv") "/srv/" (concat (getenv "HOME") "/src/")))
 
 (defun giturl-to-dir (url)
   "Convert a git URL to a local path."
@@ -231,13 +190,15 @@
     (when (null (url-host inf))
       (error "Invalid url: %s" url))
     (concat
-     "/srv/" (url-host inf)
-     (replace-regexp-in-string
+     tc/git-root-dir (url-host inf)
+     (string-replace
       " " ""
-      (replace-regexp-in-string
+      (string-replace
        "/r/" "/"
-       (replace-regexp-in-string
-        ".git$" "" (url-filename inf)))))))
+       (string-replace
+        "/gerrit/" "/"
+        (replace-regexp-in-string
+         ".git$" "" (url-filename inf))))))))
 
 (defun git-clone-url (url dir)
   (message "clonning %s to %s" url dir)
@@ -260,15 +221,6 @@
   "Show the full path file name in the minibuffer."
   (interactive)
   (message (buffer-file-name)))
-
-(defun remove-window-decoration ()
-  (interactive)
-  (let ((frame-name (frame-parameter (selected-frame) 'name)))
-    (call-process-shell-command (concat
-                                 "xprop -name \""
-                                 frame-name
-                                 "\" -f _MOTIF_WM_HINTS 32c -set _MOTIF_WM_HINTS '0x2, 0x0, 0x0, 0x0, 0x0'"))))
-
 
 (require 'mygtd (concat (getenv "HOME") "/.mygtd.el") t)
 (require 'mynotmuch (concat (getenv "HOME") "/.emacs.d/mynotmuch.el") t)
@@ -464,33 +416,6 @@ Version: 2020-06-26 2023-09-19 2023-10-29"
                 (throw 'EndReached t)
               (forward-char))))))))
 
-
-(use-package helpful
-  :disabled ;; helpful is quite slow
-  :config
-;; Note that the built-in `describe-function' includes both functions
-;; and macros. `helpful-function' is functions only, so we provide
-;; `helpful-callable' as a drop-in replacement.
-(global-set-key (kbd "C-h f") #'helpful-callable)
-
-(global-set-key (kbd "C-h v") #'helpful-variable)
-(global-set-key (kbd "C-h k") #'helpful-key)
-(global-set-key (kbd "C-h x") #'helpful-command)
-
-;; Lookup the current symbol at point. C-c C-d is a common keybinding
-;; for this in lisp modes.
-(global-set-key (kbd "C-c C-d") #'helpful-at-point)
-
-;; Look up *F*unctions (excludes macros).
-;;
-;; By default, C-h F is bound to `Info-goto-emacs-command-node'. Helpful
-;; already links to the manual, if a function is referenced there.
-(global-set-key (kbd "C-h F") #'helpful-function)
-
-(setq counsel-describe-function-function #'helpful-callable)
-(setq counsel-describe-variable-function #'helpful-variable)
-)
-
 ;; Borrowed from https://github.com/purcell/emacs.d
 (define-minor-mode prose-mode
   "Set up a buffer for prose editing.
@@ -530,7 +455,7 @@ typical word processor."
       (writeroom-mode 0))))
 
 ;; purescript use flycheck
-(define-key purescript-mode-map (kbd "<f3>") 'flycheck-next-error)
+;; (define-key purescript-mode-map (kbd "<f3>") 'flycheck-next-error)
 
 ;; ignore code block in spellcheck
 (add-to-list 'ispell-skip-region-alist '("^```" . "```$"))

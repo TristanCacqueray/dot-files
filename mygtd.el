@@ -20,7 +20,7 @@
 
 ;; Look for agenda item in these files
 (setq org-agenda-files '("~/org/projects.org.gpg" "~/org/home.org.gpg" "~/org/inbox.org.gpg"))
-(debug-watch 'org-agenda-files)
+;; (debug-watch 'org-agenda-files)
 (use-package org
   :config
   (setq-default
@@ -81,10 +81,7 @@
             " src=\"https://www.youtube.com/embed/%s\""
             " frameborder=\"0\""
             " allow=\"accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture\""
-            " allowfullscreen></iframe>")
-
-
-    )
+            " allowfullscreen></iframe>"))
   (org-add-link-type
    "yt"
    (lambda (handle)
