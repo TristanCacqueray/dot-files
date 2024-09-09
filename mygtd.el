@@ -208,4 +208,26 @@
 ;; Make sure the org is saved
 (advice-add 'org-refile :after (lambda (&rest _) (org-save-all-org-buffers)))
 
+(defun present-agenda ()
+  "Show the agenda in full screen."
+  (setq org-agenda-restore-windows-after-quit 't)
+  (org-agenda nil "g")
+  (delete-other-windows))
+
+;; Register a window focus change handler
+(add-function :after after-focus-change-function #'tc/show-agenda-after-inactivity)
+;; Keep track of the last time emacs got the focus
+(setq tc/last-focus (float-time))
+(defun tc/show-agenda-after-inactivity ()
+  "Display the agenda when Emacs get the focus after being idle for EXPIRY seconds."
+  (let ((expiry (* 3600 5)))
+    (pcase (frame-focus-state)
+      ;; The window got the focus
+      (`t (when (> (- (float-time) tc/last-focus) expiry)
+            ;; todo: display an animation :)
+            (message "Welcome back!")
+            (present-agenda)))
+      ;; The window lost the focus
+      (`nil (setq tc/last-focus (float-time))))))
+
 (provide 'mygtd)
