@@ -5,8 +5,7 @@
 cat <<EOF>/dev/null
 mkdir -p ~/src/github.com/TristanCacqueray/dot-files
 git clone https://github.com/TristanCacqueray/dot-files ~/src/github.com/TristanCacqueray/dot-files
-ln -sf $(realpath ~/src/github.com/TristanCacqueray/dot-files/rcrc) ~/.rcrc
-rcup -v -d ~/src/github.com/TristanCacqueray/dot-files
+stow -d ~/src/github.com/TristanCacqueray/dot-files -t ~ home desktop
 ~/src/github.com/TristanCacqueray/dot-files/init.sh
 EOF
 

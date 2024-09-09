@@ -1,0 +1,2 @@
+#!/bin/sh
+exec emacsclient -c -e '(progn (interactive) (org-capture nil "t"))'
