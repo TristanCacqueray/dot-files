@@ -8,10 +8,9 @@ in  Podenv.Application::{
     , namespace = Some "host"
     , runtime = Hub.nix.useInstallables [ "github:podenv/devenv" ]
     , command = [ "nix-shell", "--arg", "withX", "true", "--command", "emacs" ]
-    , environ = [ "EDITOR=emacsclient", "GDK_BACKEND=x11" ]
+    , environ = [ "EDITOR=emacsclient" ]
     , volumes = [ "~/src", "~/.config/devenv:~" ]
     , capabilities = Podenv.Capabilities::{
-      , x11 = True
       , terminal = True
       , wayland = True
       , dbus = True

@@ -28,6 +28,7 @@
 (display-time-mode)
 
 ;; Start the server and setup the EDITOR
+(require 'server)
 (unless (server-running-p)
   (server-start)
   (setenv "EDITOR" "emacsclient"))
@@ -182,6 +183,7 @@
 (defun parse-git-url (url)
   (url-generic-parse-url url))
 
+(require 'f)
 (setq tc/git-root-dir (if (f-writable-p "/srv") "/srv/" (concat (getenv "HOME") "/src/")))
 
 (defun giturl-to-dir (url)
