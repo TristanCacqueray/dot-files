@@ -98,8 +98,7 @@
  package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
                     ("melpa" . "https://melpa.org/packages/"))
  ;; packages to have installed
- package-selected-packages '(anzu company counsel diminish f s ivy magit smex undo-tree uniquify yaml-mode go-mode)
- )
+ package-selected-packages '(anzu company diminish f s magit smex undo-tree yaml-mode go-mode))
 
 ;; Initialize the packages
 (package-initialize)
@@ -134,6 +133,7 @@
 
 ;; Better menus
 (use-package counsel
+  :load-path "~/src/github.com/abo-abo/swiper"
   :diminish
   :config
   (counsel-mode 1)
@@ -141,11 +141,13 @@
 
 ;; Better search
 (use-package swiper
+  :load-path "~/src/github.com/abo-abo/swiper"
   :bind (("M-s" . swiper))
   )
 
 ;; Better minibuffer completions
 (use-package ivy
+  :load-path "~/src/github.com/abo-abo/swiper"
   :diminish
   :config
   ;; only show 18 candidates
