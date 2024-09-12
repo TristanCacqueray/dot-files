@@ -105,29 +105,6 @@
 (defun start-nix-worker-process (name command)
   (start-worker-process name "nix-shell" "--command" command))
 
-(defun tc/project-name ()
-  "Get the project root dir name and it's parent directory."
-  (let ((path (project-root (project-current))))
-    (f-join (f-filename (f-dirname path)) (f-filename path))))
-
-(defun project-id (suffix)
-  "Make a buffer name based on the project name - SUFFIX."
-  (let ((pname
-         (cond ((string= default-directory "~/") (getenv "USER"))
-               ((string= default-directory "/home/fedora/") "fedora")
-               (t (tc/project-name)))))
-    (concat pname "-" suffix)))
-
-
-(defun tc/pshell (suffix)
-  "Start a shell for the given project with a buffer named with SUFFIX."
-  (let ((*buffer* (get-buffer-create (concat "*" (project-id "shell") suffix "*"))))
-    (if (get-buffer-process *buffer*)
-        (switch-to-buffer-other-window *buffer*)
-      (shell *buffer*))))
-(global-set-key (kbd "<f1>") (lambda () (interactive) (tc/pshell "")))
-(global-set-key (kbd "<f2>") (lambda () (interactive) (tc/pshell "-sec")))
-
 (defun get-newest-file-from-dir  (path)
   "Return the latest file in PATH."
   (car (directory-files path 'full nil #'file-newer-than-file-p)))
@@ -146,78 +123,8 @@
   (newline)
   (newline))
 
-;; better comint
-(defun turn-on-comint-history ()
-  "Save comint history per buffer."
-  (let ((process (get-buffer-process (current-buffer))))
-    (when process
-      (mkdir (concat user-emacs-directory "comint-history") t)
-      (setq comint-input-ring-file-name
-            (expand-file-name (concat user-emacs-directory "comint-history/"
-                                      (string-replace "/" "_" (string-replace "*" "" (buffer-name (current-buffer)))))))
-      (message "buffer history: %s" comint-input-ring-file-name)
-      (comint-read-input-ring t)
-      (add-hook 'kill-buffer-hook 'comint-write-history-on-exit nil :local))))
 
-(defun comint-write-history-on-exit ()
-  "Write the comint history."
-  (message "Writting %s" comint-input-ring-file-name)
-  (comint-write-input-ring))
 
-(use-package comint
-  :defer t
-  :config
-  ;; Increase comint buffer size.
-  (setq comint-buffer-maximum-size 32768)
-  ;; Save per buffer history
-  (add-hook 'shell-mode-hook 'turn-on-comint-history)
-  ;; Save buffer history on exit
-  (defun comint-write-input-ring-all-buffers ()
-    (mapc (lambda (buffer)
-            (with-current-buffer buffer
-              (comint-write-history-on-exit)))
-          (buffer-list)))
-  (add-hook 'kill-emacs-hook 'comint-write-input-ring-all-buffers))
-
-;; a git clone helper
-(defun parse-git-url (url)
-  (url-generic-parse-url url))
-
-(require 'f)
-(setq tc/git-root-dir (if (f-writable-p "/srv") "/srv/" (concat (getenv "HOME") "/src/")))
-
-(defun giturl-to-dir (url)
-  "Convert a git URL to a local path."
-  (let ((inf (parse-git-url url)))
-    (when (null (url-host inf))
-      (error "Invalid url: %s" url))
-    (concat
-     tc/git-root-dir (url-host inf)
-     (string-replace
-      " " ""
-      (string-replace
-       "/r/" "/"
-       (string-replace
-        "/gerrit/" "/"
-        (replace-regexp-in-string
-         ".git$" "" (url-filename inf))))))))
-
-(defun git-clone-url (url dir)
-  (message "clonning %s to %s" url dir)
-  (mkdir dir t)
-  (call-process "git" nil (get-buffer-create "*git-clone-log*") nil "clone" url dir))
-
-(defun f-git? (path)
-  (f-directory? (concat path "/.git")))
-
-(defun git-clone (url)
-  "Create directory, clone and open project"
-  (interactive "Murl: ")
-  (let ((d (giturl-to-dir url)))
-    (unless (f-git? d)
-      (git-clone-url url d))
-    ;; todo: check if clone process succeeded
-    (dired d)))
 
 (defun show-file-name ()
   "Show the full path file name in the minibuffer."
@@ -462,5 +369,16 @@ typical word processor."
 ;; ignore code block in spellcheck
 (add-to-list 'ispell-skip-region-alist '("^```" . "```$"))
 
+;; Setup custom packages...
+(use-package project-shell
+  :load-path "~/src/github.com/TristanCacqueray/emacs-toolbox"
+  :config
+  (global-set-key (kbd "<f1>") (lambda () (interactive) (project-shell-history "")))
+  (global-set-key (kbd "<f2>") (lambda () (interactive) (project-shell-history "<2>"))))
+
+(use-package git-clone
+  :load-path "~/src/github.com/TristanCacqueray/emacs-toolbox")
+
+
 (provide 'init)
-;;; emacs ends here
+;;; .emacs.el ends here

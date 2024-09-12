@@ -214,8 +214,10 @@
 (use-package project-shell
   :load-path "~/src/github.com/TristanCacqueray/emacs-toolbox"
   :config
-  (global-set-key (kbd "<f1>") (lambda () (interactive) (project-shell-history "")))
+  (global-set-key (kbd "<f1>") (lambda () (interactive) (project-shell-history)))
   (global-set-key (kbd "<f2>") (lambda () (interactive) (project-shell-history "<2>"))))
 
 (use-package git-clone
   :load-path "~/src/github.com/TristanCacqueray/emacs-toolbox")
+
+;;; .emacs.el ends here
