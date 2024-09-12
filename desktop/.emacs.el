@@ -379,6 +379,9 @@ typical word processor."
 (use-package git-clone
   :load-path "~/src/github.com/TristanCacqueray/emacs-toolbox")
 
+(use-package dired-quick-sort
+  :config
+  (dired-quick-sort-setup))
 
 (provide 'init)
 ;;; .emacs.el ends here
