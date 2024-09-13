@@ -8,7 +8,7 @@
 ;;;    Use "C-h v" to display variable documentations (or "C-c C-d" for symbol at point with helpful)
 ;;; Code:
 
-(require 'org-ql)
+(use-package org-ql)
 
 ;; Unfortunately org-mode does not support timestamp with timezone, so this ensure correct format on export.
 (setq org-icalendar-timezone "America/New_York")
@@ -96,61 +96,55 @@
   )
 
 
-(use-package org-capture
-  :bind ("C-c c" . org-capture)
-  :demand
-  :config
-  (setq
-   ;; Use any org-agendas file as refile target, only first level
-   org-refile-targets '((org-agenda-files :maxlevel . 1))
-   ;; Use full outline paths for refile targets
-   org-refile-use-outline-path t
-   ;; Targets complete directly
-   org-outline-path-complete-in-steps nil
-   )
-  (setq org-refile-use-cache nil)
-  (setq org-capture-templates
-        '(
-          ("t" "todo" entry (file tc/inbox)
-           "* TODO %?\n/Entered on/ %U\n")
-          ("d" "done" entry (file tc/inbox)
-           "* DONE %?\nCLOSED: %U\n")
-          ("j" "Journal" entry (file+olp+datetree tc/journal)
-           "* %?\n")
-          ))
+(setq
+ ;; Use any org-agendas file as refile target, only first level
+ org-refile-targets '((org-agenda-files :maxlevel . 1))
+ ;; Use full outline paths for refile targets
+ org-refile-use-outline-path t
+ ;; Targets complete directly
+ org-outline-path-complete-in-steps nil
+ )
+(setq org-refile-use-cache nil)
+(setq org-capture-templates
+      '(
+        ("t" "todo" entry (file tc/inbox)
+         "* TODO %?\n/Entered on/ %U\n")
+        ("d" "done" entry (file tc/inbox)
+         "* DONE %?\nCLOSED: %U\n")
+        ("j" "Journal" entry (file+olp+datetree tc/journal)
+         "* %?\n")
+        ))
 
-  (define-key global-map (kbd "<f5>") (lambda () (interactive) (org-capture nil "t")))
+(define-key global-map (kbd "<f5>") (lambda () (interactive) (org-capture nil "t")))
 
-  (defun tc/org-capture-done ()
-    (interactive)
-    (org-capture nil "d"))
+(defun tc/org-capture-done ()
+  (interactive)
+  (org-capture nil "d"))
 
-  (define-key global-map (kbd "<f8>") 'tc/org-capture-done)
+(define-key global-map (kbd "<f8>") 'tc/org-capture-done)
 
-  (defun tc/org-capture-journal ()
-    "Capture a journal item"
-    (interactive)
-    (org-capture nil "j"))
-  (define-key global-map (kbd "C-c j") 'tc/org-capture-journal)
-  )
+(defun tc/org-capture-journal ()
+  "Capture a journal item"
+  (interactive)
+  (org-capture nil "j"))
+(define-key global-map (kbd "C-c j") 'tc/org-capture-journal)
+
 
 ;; example agenda config
 (defun tc/org-agenda-show-agenda-and-todo (&optional arg)
   (interactive "P")
   (org-agenda arg "a"))
 
-(use-package org-agenda
-  :bind ("<f12>"   . tc/org-agenda-show-agenda-and-todo)
-  :config
-  (define-key global-map (kbd "C-c a") 'org-agenda)
-  (setq
-   ;; Start agenda at today
-   org-agenda-start-on-weekday nil
-   ;; Do not dim blocked tasks
-   org-agenda-dim-blocked-tasks nil
-   ;; Compact the block agenda view
-   org-agenda-compact-blocks t
-   ))
+(global-set-key (kbd "<f12>") 'tc/org-agenda-show-agenda-and-todo)
+(define-key global-map (kbd "C-c a") 'org-agenda)
+(setq
+ ;; Start agenda at today
+ org-agenda-start-on-weekday nil
+ ;; Do not dim blocked tasks
+ org-agenda-dim-blocked-tasks nil
+ ;; Compact the block agenda view
+ org-agenda-compact-blocks t
+ )
 
 ;; gtd settings from [[file:/srv/github.com/rougier/emacs-GTD/GTD.org]]
 (setq-default org-agenda-hide-tags-regexp ".")
@@ -193,17 +187,19 @@
     )
   )
 
-(add-to-list 'load-path "/srv/github.com/TristanCacqueray/emacs-toolbox")
-;; Update schedule events when the agenda is displayed
-(require 'org-next-event)
-(add-hook 'org-agenda-mode-hook 'org-next-event-render)
+(when (file-directory-p "/srv/github.com/TristanCacqueray/emacs-toolbox")
+  (add-to-list 'load-path "/srv/github.com/TristanCacqueray/emacs-toolbox")
+  ;; Update schedule events when the agenda is displayed
+  (require 'org-next-event)
+  (add-hook 'org-agenda-mode-hook 'org-next-event-render)
+  (require 'org-report)
+  ;; From anywhere, f6 shows the daily report
+  (define-key global-map (kbd "<f6>") 'org-report-daily-show)
 
-(require 'org-report)
-;; From anywhere, f6 shows the daily report
-(define-key global-map (kbd "<f6>") 'org-report-daily-show)
+  ;; In the daily report calendar view, f6 format the report
+  (define-key org-agenda-mode-map (kbd "<f6>") 'org-report-daily)
 
-;; In the daily report calendar view, f6 format the report
-(define-key org-agenda-mode-map (kbd "<f6>") 'org-report-daily)
+  )
 
 ;; Make sure the org is saved
 (advice-add 'org-refile :after (lambda (&rest _) (org-save-all-org-buffers)))
@@ -229,5 +225,115 @@
             (present-agenda)))
       ;; The window lost the focus
       (`nil (setq tc/last-focus (float-time))))))
+
+
+
+(defun xah-get-bounds-of-block ()
+  "Return the boundary (START . END) of current block.
+Version: 2021-08-12"
+  (let ( $p1 $p2 ($blankRegex "\n[ \t]*\n"))
+    (save-excursion
+      (setq $p1 (if (re-search-backward $blankRegex nil 1)
+                    (goto-char (match-end 0))
+                  (point)))
+      (setq $p2 (if (re-search-forward $blankRegex nil 1)
+                    (match-beginning 0)
+                  (point))))
+    (cons $p1 $p2 )))
+
+(defun xah-get-bounds-of-block-or-region ()
+  "If region is active, return its boundary, else same as `xah-get-bounds-of-block'.
+Version: 2021-08-12"
+  (if (region-active-p)
+      (cons (region-beginning) (region-end))
+    (xah-get-bounds-of-block)))
+
+(defun xah-quote-lines (QuoteL QuoteR Sep)
+  "Add quotes/brackets and separator (comma) to lines.
+Act on current block or selection.
+
+For example,
+
+ cat
+ dog
+ cow
+
+becomes
+
+ \"cat\",
+ \"dog\",
+ \"cow\",
+
+or
+
+ (cat)
+ (dog)
+ (cow)
+
+In lisp code, QuoteL QuoteR Sep are strings.
+
+URL `http://xahlee.info/emacs/emacs/emacs_quote_lines.html'
+Version: 2020-06-26 2023-09-19 2023-10-29"
+  (interactive
+   (let ((xbrackets
+          '(
+            "\"double quote\""
+            "'single quote'"
+            "(paren)"
+            "{brace}"
+            "[square]"
+            "<greater>"
+            "`emacs'"
+            "`markdown`"
+            "~tilde~"
+            "=equal="
+            "“curly double”"
+            "‘curly single’"
+            "‹french angle›"
+            "«french double angle»"
+            "「corner」"
+            "none"
+            "other"
+            ))
+         (xcomma '("comma ," "semicolon ;" "none" "other"))
+         xbktChoice xsep xsepChoice xquoteL xquoteR)
+     (let ((completion-ignore-case t))
+       (setq xbktChoice (completing-read "Quote to use:" xbrackets nil t nil nil (car xbrackets)))
+       (setq xsepChoice (completing-read "line separator:" xcomma nil t nil nil (car xcomma))))
+     (cond
+      ((string-equal xbktChoice "none")
+       (setq xquoteL "" xquoteR ""))
+      ((string-equal xbktChoice "other")
+       (let ((xx (read-string "Enter 2 chars, for begin/end quote:")))
+         (setq xquoteL (substring xx 0 1)
+               xquoteR (substring xx 1 2))))
+      (t (setq xquoteL (substring xbktChoice 0 1)
+               xquoteR (substring xbktChoice -1))))
+     (setq xsep
+           (cond
+            ((string-equal xsepChoice "comma ,") ",")
+            ((string-equal xsepChoice "semicolon ;") ";")
+            ((string-equal xsepChoice "none") "")
+            ((string-equal xsepChoice "other") (read-string "Enter separator:"))
+            (t xsepChoice)))
+     (list xquoteL xquoteR xsep)))
+  (let (xp1 xp2 (xquoteL QuoteL) (xquoteR QuoteR) (xsep Sep))
+    (let ((xbds (xah-get-bounds-of-block-or-region)))
+      (setq xp1 (car xbds) xp2 (cdr xbds)))
+    (save-excursion
+      (save-restriction
+        (narrow-to-region xp1 xp2)
+        (goto-char (point-min))
+        (catch 'EndReached
+          (while t
+            (skip-chars-forward "\t ")
+            (insert xquoteL)
+            (end-of-line)
+            (insert xquoteR xsep)
+            (if (eq (point) (point-max))
+                (throw 'EndReached t)
+              (forward-char))))))))
+
+
 
 (provide 'mygtd)
