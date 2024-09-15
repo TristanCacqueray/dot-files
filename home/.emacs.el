@@ -112,6 +112,9 @@
  ;; Paste at cursor position, not at mouse pointer
  mouse-yank-at-point t
 
+ ;; Do not save duplicates in kill-ring
+ kill-do-not-save-duplicates t
+
  ;; Ignore dup entry in interpreter history
  comint-input-ignoredups t
 
@@ -137,6 +140,15 @@
 
  ;; Use modern spell checker
  ispell-program-name "aspell"
+
+ ;; automatically update dired buffers on revisiting their directory
+ dired-auto-revert-buffer t
+
+ ;; Make dired do something intelligent when two directories are shown
+ dired-dwim-target t
+
+ ;; save the bookmarks file every time a bookmark is made or deleted
+ bookmark-save-flag 1
  )
 
 ;; Do not save backup in projects, keep them in home
@@ -196,11 +208,20 @@
 ;; Do not truncate lines by default
 (toggle-truncate-lines -1)
 
+;; Typed text replaces the selection if the selection is active,
+;; pressing delete or backspace deletes the selection.
+(delete-selection-mode)
+
 ;; Uncomment if auto indentation doesn't work
 ;; (electric-indent-mode -1)
 
 ;; Documentation overlays
 (global-eldoc-mode)
+
+;; Better support for files with long lines
+(setq-default bidi-paragraph-direction 'left-to-right)
+(setq-default bidi-inhibit-bpa t)
+(global-so-long-mode)
 
 ;; Delete trailing space on save
 ;; TODO: figure out how to temporarly disable this feature per buffer when it is annoying
