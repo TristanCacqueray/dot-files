@@ -287,53 +287,53 @@
   (global-set-key (kbd "M-<insert>") 'simpleclip-paste)
   (simpleclip-mode))
 
-;; Fuzzy matching interface
-(use-package smex
-  :ensure
-  :config
-  (smex-initialize))
-
 ;; Text completion framework
 (use-package company
   :diminish
   :config
   (global-company-mode))
 
-;; Completion functions for 'ivy'
-(setq local-swiper ; Load a local checkout to pull https://github.com/abo-abo/swiper/pull/3051
-      (let ((lpath "~/src/github.com/abo-abo/swiper")) (when (file-directory-p lpath) lpath)))
-(use-package counsel
-  :load-path local-swiper
-  :diminish
-  :config
-  (counsel-mode))
+;; VERTical Interactive COmpletion
+(use-package vertico
+  :custom
+  (vertico-count 20)
+  :bind (:map vertico-map
+              ;; Use page-up/down to scroll vertico buffer, like ivy does by default.
+              ("<prior>" . 'vertico-scroll-down)
+              ("<next>" . 'vertico-scroll-up))
+  :init
+  (vertico-mode))
 
-;; Vertical completion user interface
-(use-package ivy
-  :load-path local-swiper
-  :diminish
-  :config
-  ;; only show 18 candidates
-  (setq ivy-height 18)
-  ;; load recenf and bookmarks when using ivy-switch-buffer
-  (setq ivy-use-virtual-buffers t)
-  ;; no regexp by default
-  (setq ivy-initial-inputs-alist nil)
-  ;; allow out of order inputs
-  (setq ivy-re-builders-alist '((t   . ivy--regex-ignore-order)))
-  ;; Show full path for virtual buffers
-  (setq ivy-virtual-abbreviate 'full)
-  ;; Press C-p when you're on the first candidate to select your input
-  (setq ivy-use-selectable-prompt t)
-  (ivy-mode)
-  )
+;; Completion style for matching regexps in any order
+(use-package orderless
+  :custom
+  (completion-styles '(orderless basic))
+  (completion-category-defaults nil)
+  ;; Enable partial completion for file wildcard support
+  (completion-category-overrides '((file (styles partial-completion)))))
 
-;; Better search
-(use-package swiper
-  :load-path local-swiper
+;; Consulting completing-read, better emacs command
+(use-package consult
+  :custom
+  ;; Disable preview
+  (consult-preview-key nil)
+  :bind
+  (("C-x b" . 'consult-buffer)  ;; Switch buffer, including recentf and bookmarks
+   ("M-l" . 'consult-git-grep)
+   ("M-y" . 'consult-yank-pop)  ;; Paste by selecting the kill-ring
+   ("M-s" . 'consult-line)      ;; Search current buffer, like swiper
+   ))
+
+;; Embark let you export a completion list with 'E' amongs other thing.
+;; When running git-grep, the export creates a special buffer to browse the results.
+(use-package embark
+  :demand t ;; fixme: why without :demand, the "Loading package" verbose message is not printed?
+  :bind
+  (("C-." . embark-act)         ;; Begin the embark process
+   ("C-;" . embark-dwim)        ;; good alternative: M-.
+   ("C-h B" . embark-bindings)) ;; alternative for `describe-bindings'
   :config
-  (global-set-key (kbd "M-s") 'swiper)
-  )
+  (use-package embark-consult))
 
 ;; Better replace with visual feedback
 (use-package anzu
@@ -386,10 +386,6 @@
 
 (use-package all-the-icons
   :if (display-graphic-p))
-
-(use-package all-the-icons-ivy-rich
-  :if (display-graphic-p)
-  :init (all-the-icons-ivy-rich-mode 1))
 
 ;; show uncommitted changes in the fringe
 (use-package diff-hl
@@ -751,9 +747,6 @@ typical word processor."
 (global-set-key (kbd "M-g l") 'avy-goto-line)
 (global-set-key (kbd "M-g w") 'avy-goto-word-1)
 (global-set-key (kbd "M-g e") 'avy-goto-word-0)
-
-
-(global-set-key (kbd "M-l") 'counsel-git-grep)
 
 (global-set-key (kbd "C-,") 'yank)
 (global-set-key (kbd "M-u") 'undo)
