@@ -552,16 +552,8 @@
 ;; switch to project and load magit right away
 (defun project-switch-magit (dir)
   (interactive (list (funcall project-prompter)))
-  (project--remember-dir dir)
-  (let ((buffer (current-buffer)))
-    (unwind-protect
-        (progn
-          (setq-local project-current-directory-override dir)
-          (cd dir)
-          (magit-status))
-      (with-current-buffer buffer
-        (kill-local-variable 'project-current-directory-override)))))
-
+  ;; (project--remember-dir dir)
+  (magit-status dir))
 
 (progn
   ;; Display the current date in the modeline
