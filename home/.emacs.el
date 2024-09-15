@@ -328,15 +328,6 @@
 ;; Auto formater, TODO: check if reformat works better?
 (use-package format-all)
 
-;; Better history, checkout M-x undo-tree-visualize
-(use-package undo-tree
-  :diminish
-  :config
-  (setq undo-tree-visualizer-timestamps t)
-  (setq undo-tree-visualizer-diff t)
-  (setq undo-tree-auto-save-history nil)
-  (global-undo-tree-mode))
-
 ;; Ensure unique buffer names
 (progn
   (require 'uniquify) ;; TODO: figure out why (use-package uniquify) fail, it is provided by emacs so that should work..
@@ -749,8 +740,8 @@ typical word processor."
 (global-set-key (kbd "M-l") 'counsel-git-grep)
 
 (global-set-key (kbd "C-,") 'yank)
-(global-set-key (kbd "M-u") 'undo-tree-undo)
-(global-set-key (kbd "M-r") 'undo-tree-redo)
+(global-set-key (kbd "M-u") 'undo)
+(global-set-key (kbd "M-r") 'undo-redo)
 
 (global-set-key (kbd "<f1>") (lambda () (interactive) (project-shell-history)))
 (global-set-key (kbd "<f2>") (lambda () (interactive) (project-shell-history "<2>")))
