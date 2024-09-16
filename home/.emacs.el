@@ -400,6 +400,12 @@
   :config
   (dired-quick-sort-setup))
 
+;; multiple cursors
+(use-package multiple-cursors
+  :bind
+  (("C->" . 'mc/mark-next-like-this)
+   ("C-<" . 'mc/mark-previous-like-this)))
+
 ;;;
 ;;; Custom file format modes
 ;;;
@@ -733,11 +739,6 @@ typical word processor."
 
 ;; Unbind C-t for tmux
 (global-unset-key (kbd "C-t"))
-
-;; multiple-cursors
-(global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
-(global-set-key (kbd "C->") 'mc/mark-next-like-this)
-(global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
 
 ;; avy
 (global-set-key (kbd "M-g d") 'avy-goto-char-timer)
