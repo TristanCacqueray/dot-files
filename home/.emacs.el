@@ -126,10 +126,6 @@
  ;; Display filepath in window title
  frame-title-format (list '(buffer-file-name "%f" (dired-directory dired-directory "%b")))
 
- ;; display odd spaces
- whitespace-style '(face trailing tabs empty space-after-tab space-before-tab tab-mark)
- ;; TODO: tweaks whitespace colors
-
  ;; Process performance tuning
  read-process-output-max (* 4 1024 1024)
  process-adaptive-read-buffering nil
@@ -237,9 +233,6 @@
 
 ;; enable subword
 (add-hook 'prog-mode-hook 'subword-mode)
-
-;; show whitespaces
-(add-hook 'prog-mode-hook 'whitespace-mode)
 
 ;; ignore code block in spellcheck
 (add-to-list 'ispell-skip-region-alist '("^```" . "```$"))
@@ -366,9 +359,17 @@
   (global-set-key (kbd "C--") 'text-scale-decrease)
   (load-theme 'solarized-dark-high-contrast t))
 
-;; Hide some builtin mode
-(diminish 'whitespace-mode)
-(use-package subword :diminish subword-mode) ; why subword-mode can only be diminished that way?
+ ;; display odd spaces
+(use-package whitespace
+  :diminish (whitespace-mode)
+  :custom
+  ;; TODO: tweaks whitespace colors
+  (whitespace-style '(face trailing tabs empty space-after-tab space-before-tab tab-mark))
+  :config
+  (add-hook 'prog-mode-hook 'whitespace-mode))
+
+(use-package subword
+  :diminish subword-mode)
 
 ;; use colors to distinguish parens
 (use-package rainbow-delimiters
