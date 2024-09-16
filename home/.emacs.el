@@ -89,8 +89,7 @@
  select-enable-primary t
  select-enable-clipboard nil
 
- ;; Don't use tabs to indent, use 4 spaces instead
- indent-tabs-mode nil
+ ;; Use 4 spaces for tab
  tab-width 4
  ;; TAB tries to indent the current line or complete the thing at point
  tab-always-indent 'complete
@@ -107,7 +106,7 @@
  scroll-conservatively 100
 
  ;; Do not ring the system bell, but show a visible feedback.
- visible-bell t
+ visible-bell nil
 
  ;; Paste at cursor position, not at mouse pointer
  mouse-yank-at-point t
@@ -150,6 +149,9 @@
  ;; save the bookmarks file every time a bookmark is made or deleted
  bookmark-save-flag 1
  )
+
+;; Use spaces instead of tabs
+(setq-default indent-tabs-mode nil)
 
 ;; Do not save backup in projects, keep them in home
 (let ((save-dir (concat user-emacs-directory "saves/")))
