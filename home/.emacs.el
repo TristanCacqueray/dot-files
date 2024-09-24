@@ -180,8 +180,8 @@
 ;; Auto revert files on change
 (global-auto-revert-mode)
 
-;; navigate windows with shift-arrow
-(windmove-default-keybindings)
+;; navigate windows with ctrl-arrow
+(windmove-default-keybindings 'control)
 
 ;; show line and column in status line
 (line-number-mode)
@@ -475,14 +475,6 @@
 
   ;; Change state using C-c C-t
   (setq org-use-fast-todo-selection t)
-
-  ;; Disable shift-arrow binding since it used for windmove
-  (setq org-support-shift-select 'always)
-  (progn
-    (add-hook 'org-shiftup-final-hook 'windmove-up)
-    (add-hook 'org-shiftleft-final-hook 'windmove-left)
-    (add-hook 'org-shiftdown-final-hook 'windmove-down)
-    (add-hook 'org-shiftright-final-hook 'windmove-right))
 
   ;; Capture note with `C-c c t'
   (require 'org-capture)
