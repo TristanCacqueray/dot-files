@@ -743,7 +743,7 @@ typical word processor."
 (if (display-graphic-p)
     ;; In graphic mode, setup a custom font
     (progn
-      (ignore-errors (set-frame-font "Iosevka Extended"))
+      (ignore-errors (set-frame-font "Iosevka Comfy Wide"))
       ;; Use a different font for Emojis
       (ignore-errors (set-fontset-font t '(#x1f300 . #x1fad0) "Noto Color Emoji")))
   ;; Otherwise for terminal, just load a default theme
