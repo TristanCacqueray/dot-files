@@ -45,9 +45,9 @@
 ;;
 ;; Or build it on RHEL:
 ;; - dnf config-manager --enable codeready-builder-for-rhel-9-x86_64-rpms
-;; - dnf install -y texinfo zlib-devel libgccjit-devel ncurses-devel gnutls-devel
+;; - dnf install -y texinfo zlib-devel libgccjit-devel ncurses-devel gnutls-devel libxml2-devel
 ;; - git clone --depth 1 -b emacs-30 https://git.savannah.gnu.org/git/emacs.git && cd emacs && ./autogen.sh
-;; - ./configure --prefix=/usr/local/emacs --without-all --with-x-toolkit=no --with-native-compilation --with-gpm --with-zlib --enable-link-time-optimization --with-gnutls
+;; - ./configure --prefix=/usr/local/emacs --without-all --with-x-toolkit=no --with-native-compilation --with-gpm --with-zlib --enable-link-time-optimization --with-gnutls --with-xml2
 ;; - make bootstrap && make install
 
 ;;; Code:
