@@ -589,6 +589,7 @@
                   mode-line-misc-info
                   ))
   (setq-default display-time-format "%Y-%m-%d %a %H:%M")
+  (setq-default display-time-default-load-average nil) ;; hide load avg
   (display-time-mode)
   )
 
