@@ -68,7 +68,7 @@
 (menu-bar-mode 0)
 
 ;; Adjust the defaults to taste
-(setq
+(setq-default
  ;; Start fullscreen, no about
  inhibit-startup-buffer-menu t
  inhibit-startup-screen t
@@ -93,6 +93,8 @@
  tab-width 4
  ;; TAB tries to indent the current line or complete the thing at point
  tab-always-indent 'complete
+ ;; Use spaces instead of tabs
+ indent-tabs-mode nil
 
  ;; Keep track of opened files
  recentf-max-saved-items 1024
@@ -144,10 +146,10 @@
 
  ;; save the bookmarks file every time a bookmark is made or deleted
  bookmark-save-flag 1
- )
 
-;; Use spaces instead of tabs
-(setq-default indent-tabs-mode nil)
+ ;; Use the minibuffer whilst in the minibuffer
+ enable-recursive-minibuffers t
+ )
 
 ;; Do not save backup in projects, keep them in home
 (let ((save-dir (concat user-emacs-directory "saves/")))
@@ -163,6 +165,9 @@
 ;; y/n for  answering yes/no questions
 (fset 'yes-or-no-p 'y-or-n-p)
 
+;; Make right-click do something sensible
+(when (display-graphic-p)
+  (context-menu-mode))
 
 ;;;
 ;;; Core packages and hooks
@@ -272,12 +277,17 @@
 (setq warning-minimum-level :emergency)
 (setq use-package-verbose t)
 
-(fset #'jsonrpc--log-event #'ignore)  ; massive perf boost---don't log every event
+;; massive eglot perf boost---don't log every event
+(fset #'jsonrpc--log-event #'ignore)
 
 ;; Make native compilation silent and prune its cache.
 (when (native-comp-available-p)
   (setq native-comp-async-report-warnings-errors 'silent) ; Emacs 28 with native compilation
   (setq native-compile-prune-cache t)) ; Emacs 29
+
+;; annoyance suppression
+(setq warning-suppress-log-types '((comp) (bytecomp)))
+(setq native-comp-async-report-warnings-errors 'silent)
 
 ;; enable hiding modes from the modeline
 (use-package diminish)
@@ -332,6 +342,11 @@
   ;; Enable partial completion for file wildcard support
   (completion-category-overrides '((file (styles partial-completion)))))
 
+;; Marginalia: annotations for minibuffer
+(use-package marginalia
+  :config
+  (marginalia-mode))
+
 ;; Consulting completing-read, better emacs command
 (use-package consult
   :custom
@@ -361,6 +376,11 @@
   :config
   (global-anzu-mode))
 
+(use-package avy
+  :bind
+  (("M-g d" . avy-goto-char-timer)
+   ("M-g l" . avy-goto-line)))
+
 ;; Auto formater, TODO: check if reformat works better?
 (use-package format-all)
 
@@ -370,6 +390,8 @@
   (setq uniquify-ignore-buffers-re "^\\*") ; don't muck with special buffers
   (setq uniquify-buffer-name-style 'forward)
   (setq uniquify-separator "/"))
+
+(use-package wgrep)
 
 ;; solarized theme
 (use-package solarized-theme
@@ -753,14 +775,8 @@ typical word processor."
 ;; Unbind C-t for tmux
 (global-unset-key (kbd "C-t"))
 
-;; avy
-(global-set-key (kbd "M-g d") 'avy-goto-char-timer)
-
 ;; Ace navigation
 (global-set-key (kbd "M-o") 'ace-window)
-(global-set-key (kbd "M-g l") 'avy-goto-line)
-(global-set-key (kbd "M-g w") 'avy-goto-word-1)
-(global-set-key (kbd "M-g e") 'avy-goto-word-0)
 
 (global-set-key (kbd "C-,") 'yank)
 (global-set-key (kbd "M-u") 'undo)
