@@ -268,7 +268,16 @@
 
 ;; Setup use-package
 (require 'use-package)
+(setq package-native-compile t)
+(setq warning-minimum-level :emergency)
 (setq use-package-verbose t)
+
+(fset #'jsonrpc--log-event #'ignore)  ; massive perf boost---don't log every event
+
+;; Make native compilation silent and prune its cache.
+(when (native-comp-available-p)
+  (setq native-comp-async-report-warnings-errors 'silent) ; Emacs 28 with native compilation
+  (setq native-compile-prune-cache t)) ; Emacs 29
 
 ;; enable hiding modes from the modeline
 (use-package diminish)
