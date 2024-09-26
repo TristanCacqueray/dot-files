@@ -107,7 +107,7 @@
  ;; Scroll up to 100 lines to bring back the cursor on screen
  scroll-conservatively 100
 
- ;; Do not ring the system bell, but show a visible feedback.
+ ;; Do not ring the system bell or show visible feedback
  visible-bell nil
 
  ;; Paste at cursor position, not at mouse pointer
@@ -448,6 +448,29 @@
   (("C->" . 'mc/mark-next-like-this)
    ("C-<" . 'mc/mark-previous-like-this)))
 
+
+;; Configure Tempel
+(use-package tempel
+  :bind (("M-+" . tempel-complete) ;; Alternative tempel-expand
+         ("M-*" . tempel-insert))
+  :init
+  ;; Setup completion at point
+  (defun tempel-setup-capf ()
+    ;; Add the Tempel Capf to `completion-at-point-functions'.
+    (setq-local completion-at-point-functions
+                (cons #'tempel-expand
+                      completion-at-point-functions)))
+
+  (add-hook 'conf-mode-hook 'tempel-setup-capf)
+  (add-hook 'prog-mode-hook 'tempel-setup-capf)
+  (add-hook 'text-mode-hook 'tempel-setup-capf)
+
+  ;; Optionally make the Tempel templates available to Abbrev,
+  ;; either locally or globally. `expand-abbrev' is bound to C-x '.
+  ;; (add-hook 'prog-mode-hook #'tempel-abbrev-mode)
+  ;; (global-tempel-abbrev-mode)
+)
+
 ;;;
 ;;; Custom file format modes
 ;;;
@@ -739,7 +762,7 @@ typical word processor."
       haskell-process-type 'cabal-repl)
 
 (setq-default
- user-full-name "Tristan Cacqueray"
+ user-full-name "Tristan de Cacqueray"
  user-mail-address "tdecacqu@redhat.com"
  mime-edit-pgp-signers '("EB103DE8B5E69E631C6FF17922B9A05C925CC5D8"))
 
@@ -768,6 +791,7 @@ typical word processor."
 
 ;; Better bindings
 (global-set-key (kbd "C-c p p") 'project-switch-magit)
+(global-set-key (kbd "C-c p f") 'project-find-file)
 ;; Do not ask for permission to kill a buffer
 (global-set-key (kbd "C-x k") 'kill-current-buffer)
 

@@ -1,0 +1,24 @@
+;; ~/.config/emacs/templates
+;; https://github.com/minad/tempel#template-syntax
+
+fundamental-mode
+
+(today (format-time-string "%Y-%m-%d"))
+(copyr (if (derived-mode-p 'emacs-lisp-mode) ";; " (if (derived-mode-p 'haskell-mode) "-- | " comment-start))
+       (format-time-string "Copyright © %Y ") user-full-name n
+       (if (derived-mode-p 'emacs-lisp-mode) ";; " (if (derived-mode-p 'haskell-mode) "-- | " comment-start))
+       "SPDX-License-Identifier: GPL-3.0-or-later")
+
+python-mode
+
+(ifm "if __name__ == \"main\":" n "  " r)
+
+markdown-mode
+
+(kbd "<kbd>" r "</kbd>")
+(code "```" r n "```")
+
+;; Local Variables:
+;; mode: lisp-data
+;; outline-regexp: "[a-z]"
+;; End:
