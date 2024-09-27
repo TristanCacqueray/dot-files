@@ -334,6 +334,19 @@ Version: 2020-06-26 2023-09-19 2023-10-29"
                 (throw 'EndReached t)
               (forward-char))))))))
 
-
+(use-package elfeed
+  :config
+  ;; Mark all YouTube entries
+  (add-hook 'elfeed-new-entry-hook
+            (elfeed-make-tagger :feed-url "youtube\\.com"
+                                :add '(video youtube)))
+  ;; Entries older than 2 weeks are marked as read
+  (add-hook 'elfeed-new-entry-hook
+            (elfeed-make-tagger :before "2 weeks ago"
+                                :remove 'unread)))
+(use-package elfeed-org
+  :config
+  (elfeed-org)
+  (setq rmh-elfeed-org-files (list "/srv/github.com/TristanCacqueray/midirus.com/content/zettle/feeds.org")))
 
 (provide 'mygtd)
