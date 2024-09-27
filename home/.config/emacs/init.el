@@ -1,4 +1,4 @@
-;;; .emacs.el --- This file contains my Emacs configuration -*- lexical-binding: t -*-
+;;; init.el --- This file contains my Emacs configuration -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2024   Tristan de Cacqueray
 
@@ -786,8 +786,8 @@ typical word processor."
   (require 'project-shell (concat my-toolbox "project-shell.el") t))
 
 ;; load local scripts
-(require 'mygtd (concat (getenv "HOME") "/.mygtd.el") t)
-(require 'mynotmuch (concat (getenv "HOME") "/.emacs.d/mynotmuch.el") t)
+(require 'local-init (concat user-emacs-directory "local-init.el") t)
+(require 'mynotmuch (concat user-emacs-directory "mynotmuch.el") t)
 
 ;; Better bindings
 (global-set-key (kbd "C-c p p") 'project-switch-magit)
@@ -815,4 +815,4 @@ typical word processor."
 (global-set-key (kbd "<f5>") 'project-compile)
 
 
-;;; .emacs.el ends here
+;;; init.el ends here

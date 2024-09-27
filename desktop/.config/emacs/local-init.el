@@ -1,6 +1,7 @@
-;;; mygtd -- a getting things done implementation
+;;; local-init -- a getting things done implementation
 
 ;; Copyright (C) 2023   Tristan de Cacqueray
+;; SPDX-License-Identifier: GPL-3.0-or-later
 
 ;; Package-Requires: ((org-ql))
 
@@ -349,4 +350,4 @@ Version: 2020-06-26 2023-09-19 2023-10-29"
   (elfeed-org)
   (setq rmh-elfeed-org-files (list "/srv/github.com/TristanCacqueray/midirus.com/content/zettle/feeds.org")))
 
-(provide 'mygtd)
+(provide 'local-init)
