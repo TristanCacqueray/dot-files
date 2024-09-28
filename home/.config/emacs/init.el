@@ -368,6 +368,7 @@
    ("C-;" . embark-dwim)        ;; good alternative: M-.
    ("C-h B" . embark-bindings)) ;; alternative for `describe-bindings'
   :config
+  (keymap-set vertico-map "M-e"  'embark-export)
   (use-package embark-consult))
 
 ;; Better replace with visual feedback
