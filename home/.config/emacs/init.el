@@ -516,6 +516,8 @@
 
 (use-package json-mode)
 
+(add-to-list 'auto-mode-alist '("\\.mjs\\'" . javascript-mode))
+
 ;; For .nix file
 (use-package nix-mode)
 
