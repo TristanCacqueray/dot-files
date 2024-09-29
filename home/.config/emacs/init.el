@@ -213,7 +213,7 @@
 
 ;; Typed text replaces the selection if the selection is active,
 ;; pressing delete or backspace deletes the selection.
-(delete-selection-mode)
+;; (delete-selection-mode)
 
 ;; Uncomment if auto indentation doesn't work
 ;; (electric-indent-mode -1)
