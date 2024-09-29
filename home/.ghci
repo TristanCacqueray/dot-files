@@ -1,8 +1,7 @@
 :set -fno-warn-missing-signatures
-:def hoogle \s -> return $ ":! hoogle search -l --count=15 \"" ++ s ++ "\""
-:def doc \s -> return $ ":! hoogle search -l --info \"" ++ s ++ "\""
 :set prompt "λ> "
 :set -XLambdaCase -XMultiWayIf -XNamedFieldPuns -XNamedWildCards -XNumDecimals -XNumericUnderscores -XOverloadedStrings -XRecordWildCards -XTupleSections -XTypeOperators -XTypeApplications
 :set -Wno-unused-packages
-:def pretty \_ -> return (":set -interactive-print=Text.Pretty.Simple.pPrint")
-:def no-pretty \_ -> return (":set -interactive-print System.IO.print")
+-- TODO: fix prettier, it currently fail with: `unknown command ':pretty'`
+-- :def pretty \_ -> Control.Monad.return (":set -interactive-print=Text.Pretty.Simple.pPrint")
+-- :def no-pretty \_ -> Control.Monad.return (":set -interactive-print System.IO.print")
