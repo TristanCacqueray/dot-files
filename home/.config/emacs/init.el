@@ -567,7 +567,11 @@
    )
   )
 
-(use-package markdown-mode)
+(use-package markdown-mode
+  :bind (:map markdown-mode-map
+              ;; Use page-up/down to scroll vertico buffer, like ivy does by default.
+              ("M-p" . 'backward-paragraph)
+              ("M-n" . 'forward-paragraph)))
 
 (use-package purescript-mode
   :config
