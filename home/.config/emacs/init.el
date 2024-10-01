@@ -147,6 +147,9 @@
  ;; save the bookmarks file every time a bookmark is made or deleted
  bookmark-save-flag 1
 
+ ;; show the ediff control window inside the current frame, don't create a new window
+ ediff-window-setup-function 'ediff-setup-windows-plain
+
  ;; Use the minibuffer whilst in the minibuffer
  enable-recursive-minibuffers t
  )
