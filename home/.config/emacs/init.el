@@ -360,9 +360,9 @@
 
 ;; Consulting completing-read, better emacs command
 (use-package consult
-  :custom
-  ;; Disable preview
-  (consult-preview-key nil)
+  ;; :custom
+  ;; Disable preview. TODO: disable only for consult-buffers
+  ;; (consult-preview-key nil)
   :bind
   (("C-x b" . 'consult-buffer)  ;; Switch buffer, including recentf and bookmarks
    ("M-l" . 'consult-git-grep)
@@ -697,7 +697,6 @@
 ;; nix powered language servers
 (defun start-hls (_mode)
   "Start HLS by trying to wrap in nix develop"
-  (cd (projectile-project-root))
   (cond ((file-exists-p "flake.nix")
          (progn
            (message "Running HLS with flake")
@@ -713,7 +712,6 @@
 
 (defun start-rust-analyzer (_mode)
   "Start rust-analyzer by trying to wrap in nix develop"
-  (cd (projectile-project-root))
   (cond ((file-exists-p "flake.nix")
          (progn
            (message "Running rust-analyzer with flake")
