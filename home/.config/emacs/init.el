@@ -154,6 +154,14 @@
  enable-recursive-minibuffers t
  )
 
+;; dired
+(use-package dired-find
+  :custom
+  ;; adapted from https://sach.ac/dotemacs/index.html#dired
+  ;; and https://github.com/xenodium/ready-player/issues/18
+  ;; to handle unicode and space in file paths
+  (find-ls-option '("-print0 | xargs -0 ls -ld --quoting-style=literal" . "-ld")))
+
 ;; Do not save backup in projects, keep them in home
 (let ((save-dir (concat user-emacs-directory "saves/")))
   (setq
@@ -798,6 +806,7 @@ typical word processor."
 ;; load local scripts
 (require 'local-init (concat user-emacs-directory "local-init.el") t)
 (require 'mynotmuch (concat user-emacs-directory "mynotmuch.el") t)
+(require 'media-player (concat user-emacs-directory "media-player.el") t)
 
 ;; Better bindings
 (global-set-key (kbd "C-c p p") 'project-switch-magit)
