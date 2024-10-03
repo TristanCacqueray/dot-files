@@ -152,6 +152,9 @@
 
  ;; Use the minibuffer whilst in the minibuffer
  enable-recursive-minibuffers t
+
+ ;; Make apropos commands search more extensively.
+ apropos-do-all t
  )
 
 ;; dired
