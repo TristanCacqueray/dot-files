@@ -100,6 +100,8 @@ function gnome {
     gsettings set org.gnome.desktop.wm.keybindings cycle-windows-backward ['']
     gsettings set org.gnome.desktop.wm.keybindings switch-applications ['']
     gsettings set org.gnome.desktop.wm.keybindings switch-applications-backward ['']
+    # Disable alt-spc for corfu...
+    gsettings set org.gnome.desktop.wm.keybindings activate-window-menu ['']
 
     log "Disable sleep"
     gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-timeout 0

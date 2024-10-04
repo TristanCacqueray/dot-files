@@ -324,11 +324,26 @@
   (global-set-key (kbd "M-<insert>") 'simpleclip-paste)
   (simpleclip-mode))
 
-;; Text completion framework
-(use-package company
-  :diminish
-  :config
-  (global-company-mode))
+;; in buffer completion
+(use-package corfu
+  :bind
+  ;; Configure SPC for separator insertion
+  (:map corfu-map ("SPC" . corfu-insert-separator))
+  :init
+  (global-corfu-mode))
+
+(use-package corfu-terminal
+  :after corfu
+  :if (not (display-graphic-p))
+  :init
+  (corfu-terminal-mode +1))
+
+;; Add extensions
+(use-package cape
+  :bind ("C-c p" . cape-prefix-map)
+  :init
+  ;; auto-complete path!
+  (add-hook 'completion-at-point-functions #'cape-file))
 
 ;; VERTical Interactive COmpletion
 (use-package vertico
