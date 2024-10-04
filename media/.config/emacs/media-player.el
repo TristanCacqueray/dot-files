@@ -6,6 +6,9 @@
 (use-package ready-player
   :load-path "/srv/github.com/xenodium/ready-player"
   :custom
+  ;; don't play video
+  (ready-player-supported-audio (append ready-player-supported-audio ready-player-supported-video))
+  (ready-player-supported-video nil)
   ;; keep the buffer separator to avoid confusion
   (ready-player-hide-modeline nil)
   ;; disable video window, I just want music. TODO: implement a behavior toggle
