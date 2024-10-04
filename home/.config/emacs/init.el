@@ -165,6 +165,10 @@
   ;; to handle unicode and space in file paths
   (find-ls-option '("-print0 | xargs -0 ls -ld --quoting-style=literal" . "-ld")))
 
+(use-package dired
+  :custom
+  (dired-listing-switches "-alh"))
+
 ;; Do not save backup in projects, keep them in home
 (let ((save-dir (concat user-emacs-directory "saves/")))
   (setq
