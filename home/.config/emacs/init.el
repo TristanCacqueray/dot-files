@@ -828,9 +828,9 @@ typical word processor."
 (require 'mynotmuch (concat user-emacs-directory "mynotmuch.el") t)
 (require 'media-player (concat user-emacs-directory "media-player.el") t)
 
-;; Better bindings
-(global-set-key (kbd "C-c p p") 'project-switch-magit)
-(global-set-key (kbd "C-c p f") 'project-find-file)
+;; Make switch project go straight to magit
+(global-set-key (kbd "C-x p p") 'project-switch-magit)
+
 ;; Do not ask for permission to kill a buffer
 (global-set-key (kbd "C-x k") 'kill-current-buffer)
 
