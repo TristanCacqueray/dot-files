@@ -404,6 +404,13 @@
   (keymap-set vertico-map "M-e"  'embark-export)
   (use-package embark-consult))
 
+(use-package tramp
+  :custom
+  ;; Ensure multi-hop stays verbatim, e.g. /ssh:user@host|sudo:host:/path
+  ;; With this, the bookmark will be reduced to =/ssh:root@host/=, which doesn't work
+  ;; Q: is this worth reporting/fixing upstream?
+  (tramp-show-ad-hoc-proxies t))
+
 ;; Better replace with visual feedback
 (use-package anzu
   :diminish
