@@ -51,27 +51,12 @@
    ;; disable org-todo pop-up on C-c C-t
    org-use-fast-todo-selection 'expert
 
-   ;; But don't bother with notes when using shift arrows
-   org-treat-S-cursor-todo-selection-as-state-change nil
-
    ;; Only show one star, though this is overridden by org-bullets
    ;; org-hide-leading-stars t
 
    ;; Mail link description format, %c if from or to when sent by me
    org-email-link-description-format "Email %c (%d): %s"
    )
-
-  ;; Ensure shift arrows don't execute org commands, e.g. change todo state.
-  (setq-default org-support-shift-select nil)
-  ;; should make windmove key work in org-mode
-  (setq-default org-replace-disputed-keys t)
-
-  ;; Enable windmove-default-keybindings in org-mode
-  (add-hook 'org-shiftup-final-hook 'windmove-up)
-  (add-hook 'org-shiftleft-final-hook 'windmove-left)
-  (add-hook 'org-shiftdown-final-hook 'windmove-down)
-  (add-hook 'org-shiftright-final-hook 'windmove-right)
-
 
   ;; Custom links
   ;; http://endlessparentheses.com/embedding-youtube-videos-with-org-mode-links.html
