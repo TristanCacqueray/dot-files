@@ -335,4 +335,20 @@ Version: 2020-06-26 2023-09-19 2023-10-29"
   (elfeed-org)
   (setq rmh-elfeed-org-files (list "/srv/github.com/TristanCacqueray/midirus.com/content/zettle/feeds.org")))
 
+
+;; From: https://stackoverflow.com/a/70131908
+;; With auto saved disabled
+(defun org-archive-done-tasks ()
+  "Archive all tasks marked DONE in the file."
+  (interactive)
+  ;; Disable auto save
+  (setq org-archive-subtree-save-file-p nil)
+  (unwind-protect
+      (mapc (lambda(entry)
+              (goto-char entry)
+              (org-archive-subtree))
+            ;; process the entry in reverse to avoid changes in positioning
+            (reverse (org-map-entries (lambda () (point)) "TODO=\"DONE\"" 'file)))
+      (setq org-archive-subtree-save-file-p t)))
+
 (provide 'local-init)
