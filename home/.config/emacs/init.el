@@ -280,8 +280,7 @@
 
 ;; Setup package manager
 (require 'package)
-(setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
-                         ("melpa" . "https://melpa.org/packages/")))
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 (package-initialize)
 (unless (getenv "NIX_PATH")
   ;; nix user will have to call M-x 'package-refresh-contents' manually.
