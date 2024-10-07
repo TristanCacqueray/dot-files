@@ -60,6 +60,9 @@
 ;;; Core config
 ;;;
 
+(unless (display-graphic-p)
+  (load-theme 'modus-vivendi))
+
 ;; Remove decoration, do it early to avoid flicker
 (when (fboundp 'scroll-bar-mode)
   (scroll-bar-mode 0))
