@@ -190,6 +190,11 @@
 ;; Make sure the org is saved
 (advice-add 'org-refile :after (lambda (&rest _) (org-save-all-org-buffers)))
 
+(defun advice-unadvice (sym)
+  "Remove all advices from symbol SYM."
+  (interactive "aFunction symbol: ")
+  (advice-mapc (lambda (advice _props) (advice-remove sym advice)) sym))
+
 (defun present-agenda ()
   "Show the agenda in full screen."
   (setq org-agenda-restore-windows-after-quit 't)
