@@ -356,4 +356,14 @@ Version: 2020-06-26 2023-09-19 2023-10-29"
             (reverse (org-map-entries (lambda () (point)) "TODO=\"DONE\"" 'file)))
       (setq org-archive-subtree-save-file-p t)))
 
+(blink-cursor-mode -1)
+
+(use-package org-modern
+  :after org
+  :custom
+  (org-modern-todo-faces
+    (quote (("NEXT" :foreground "blue" :weight bold :background "orange"))))
+  :config
+  (global-org-modern-mode))
+
 (provide 'local-init)
