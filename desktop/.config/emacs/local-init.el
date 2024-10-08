@@ -22,6 +22,7 @@
 ;; Look for agenda item in these files
 (setq org-agenda-files '("~/org/projects.org.gpg" "~/org/home.org.gpg" "~/org/inbox.org.gpg"))
 ;; (debug-watch 'org-agenda-files)
+
 (use-package org
   :config
   (setq-default
@@ -31,32 +32,23 @@
    ;; Display image inline
    org-startup-with-inline-images t
 
-   ;; Insead of "..." show "⤵" when there's hidden folded content
-   ;; Some characters to choose from: …, ⤵, ▼, ↴, ⬎, ⤷, and ⋱
-   org-ellipsis "⤵"
-
    ;; Show headings up to level 2 by default when opening an org files
    org-startup-folded 'content
 
    ;; Simple TODO sequence, DONE and CANCELLED are terminal
    org-todo-keywords (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
                              (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)")))
-   org-todo-keyword-faces (quote (("TODO" :foreground "dark orange")
-                                  ("NEXT" :foreground "blue" :weight bold)
-                                  ("DONE" :foreground "forest green" :weight bold)
-                                  ("WAITING" :foreground "orange" :weight bold)
-                                  ("HOLD" :foreground "magenta" :weight bold)
-                                  ("CANCELLED" :foreground "forest green" :weight bold)))
 
    ;; disable org-todo pop-up on C-c C-t
    org-use-fast-todo-selection 'expert
 
-   ;; Only show one star, though this is overridden by org-bullets
-   ;; org-hide-leading-stars t
-
    ;; Mail link description format, %c if from or to when sent by me
    org-email-link-description-format "Email %c (%d): %s"
    )
+
+  ;; Make sure the org is saved
+  (advice-add 'org-refile :after (lambda (&rest _) (org-save-all-org-buffers)))
+
 
   ;; Custom links
   ;; http://endlessparentheses.com/embedding-youtube-videos-with-org-mode-links.html
@@ -90,27 +82,26 @@
  ;; Targets complete directly
  org-outline-path-complete-in-steps nil
  )
+;; Ensure refile is accurate.
+;; Maybe set this to t when there are too many target
 (setq org-refile-use-cache nil)
+
+;; org-capture templates
 (setq org-capture-templates
       '(
         ("t" "todo" entry (file tc/inbox)
-         "* TODO %?\n/Entered on/ %U  %a")
+         "* TODO %?\n/Entered on/ %U")
         ("d" "done" entry (file tc/inbox)
          "* DONE %?\nCLOSED: %U\n")
         ("j" "Journal" entry (file+olp+datetree tc/journal)
          "* %?\n")
         ))
 
+;; Fast shortcut to capture todo directly
 (define-key global-map (kbd "<f6>") (lambda () (interactive) (org-capture nil "t")))
 
-(defun tc/org-capture-done ()
-  (interactive)
-  (org-capture nil "d"))
-
-(define-key global-map (kbd "<f8>") 'tc/org-capture-done)
-
 (defun tc/org-capture-journal ()
-  "Capture a journal item"
+  "Capture a journal item."
   (interactive)
   (org-capture nil "j"))
 (define-key global-map (kbd "C-c j") 'tc/org-capture-journal)
@@ -122,79 +113,70 @@
   (org-agenda arg "a"))
 
 (global-set-key (kbd "<f12>") 'tc/org-agenda-show-agenda-and-todo)
-(define-key global-map (kbd "C-c a") 'org-agenda)
-(setq
- ;; Start agenda at today
- org-agenda-start-on-weekday nil
- ;; Do not dim blocked tasks
- org-agenda-dim-blocked-tasks nil
- ;; Compact the block agenda view
- org-agenda-compact-blocks t
- )
 
-;; gtd settings from [[file:/srv/github.com/rougier/emacs-GTD/GTD.org]]
-(setq-default org-agenda-hide-tags-regexp ".")
-(setq-default org-agenda-prefix-format
-              '((agenda . " %i %-12:c%?-12t% s")
-                (todo   . " ")
-                (tags   . " %i %-12:c")
-                (search . " %i %-12:c")))
 
-(setq org-habit-following-days 7
-      org-habit-preceding-days 35
-      org-habit-show-habits t)
+(use-package org-agenda
+  :config
+  ;; gtd settings from [[file:/srv/github.com/rougier/emacs-GTD/GTD.org]]
+  (setq-default org-agenda-hide-tags-regexp ".")
+  (setq-default org-agenda-prefix-format
+                '((agenda . " %i %-12:c%?-12t% s")
+                  (todo   . " ")
+                  (tags   . " %i %-12:c")
+                  (search . " %i %-12:c")))
 
-;; Toggle to show all habits ;; todo: make that into a view
-(setq org-habit-show-all-today nil)
+  (setq org-habit-following-days 7
+        org-habit-preceding-days 35
+        org-habit-show-habits t)
 
-(setq-default org-agenda-custom-commands
-              '(("g" "Get Things Done (GTD)"
-                 ((agenda ""
+  ;; Toggle to show all habits ;; todo: make that into a view
+  (setq org-habit-show-all-today nil)
+
+  ;; See https://www.labri.fr/perso/nrougier/GTD/index.html
+  (setq-default org-agenda-custom-commands
+                '(("g" "Get Things Done (GTD)"
+                   ((agenda ""
+                            ((org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline))
+                             (org-deadline-warning-days 0)))
+                    (todo "NEXT"
                           ((org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline))
-                           (org-deadline-warning-days 0)))
-                  (todo "NEXT"
-                        ((org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline))
-                         (org-agenda-prefix-format "  %i %-12:c [%e] ")
-                         (org-agenda-overriding-header "\nTasks\n")))
-                  (tags-todo "inbox"
-                             ((org-agenda-prefix-format "  %?-12t% s")
-                              (org-agenda-overriding-header "\nInbox\n")))
-                  (tags "CLOSED>=\"<today>\""
-                        ((org-agenda-overriding-header "\nCompleted today\n")))))))
+                           (org-agenda-prefix-format "  %i %-12:c [%e] ")
+                           (org-agenda-overriding-header "\nTasks\n")))
+                    (tags-todo "inbox"
+                               ((org-agenda-prefix-format "  %?-12t% s")
+                                (org-agenda-overriding-header "\nInbox\n")))
+                    (tags "CLOSED>=\"<today>\""
+                          ((org-agenda-overriding-header "\nCompleted today\n")))))))
 
-;; f4 shows the gtd view
-(define-key global-map (kbd "<f4>") (lambda () (interactive) (org-agenda nil "g")))
-
-(defun tc/get-buffer-content ()
-  "return buffer or region content."
-  (if (region-active-p)
-      (buffer-substring-no-properties (region-beginning) (region-end))
-    (buffer-substring-no-properties 1 (buffer-size))
-    )
+  ;; f4 shows the gtd view
+  (define-key global-map (kbd "<f4>") (lambda () (interactive) (org-agenda nil "g")))
   )
 
-(when (file-directory-p "/srv/github.com/TristanCacqueray/emacs-toolbox")
-  (add-to-list 'load-path "/srv/github.com/TristanCacqueray/emacs-toolbox")
-  ;; Update schedule events when the agenda is displayed
-  (require 'org-next-event)
-  (add-hook 'org-agenda-mode-hook 'org-next-event-render)
-  (require 'org-report)
-  ;; From anywhere, f6 shows the daily report
-  (define-key global-map (kbd "<f6>") 'org-report-daily-show)
+;; From: https://stackoverflow.com/a/70131908
+;; With auto saved disabled
+(defun org-archive-done-tasks ()
+  "Archive all tasks marked DONE in the file."
+  (interactive)
+  ;; Disable auto save
+  (setq org-archive-subtree-save-file-p nil)
+  (unwind-protect
+      (mapc (lambda(entry)
+              (goto-char entry)
+              (org-archive-subtree))
+            ;; process the entry in reverse to avoid changes in positioning
+            (reverse (org-map-entries (lambda () (point)) "TODO=\"DONE\"" 'file)))
+      (setq org-archive-subtree-save-file-p t)))
 
-  ;; In the daily report calendar view, f6 format the report
-  (define-key org-agenda-mode-map (kbd "<f6>") 'org-report-daily)
+(use-package org-modern
+  :after org
+  :custom
+  (org-modern-todo-faces
+    (quote (("NEXT" :foreground "blue" :weight bold :background "orange"))))
+  :config
+  (global-org-modern-mode))
 
-  )
 
-;; Make sure the org is saved
-(advice-add 'org-refile :after (lambda (&rest _) (org-save-all-org-buffers)))
-
-(defun advice-unadvice (sym)
-  "Remove all advices from symbol SYM."
-  (interactive "aFunction symbol: ")
-  (advice-mapc (lambda (advice _props) (advice-remove sym advice)) sym))
-
+;; Show the agenda in the morning
 (defun present-agenda ()
   "Show the agenda in full screen."
   (setq org-agenda-restore-windows-after-quit 't)
@@ -218,6 +200,37 @@
       (`nil (setq tc/last-focus (float-time))))))
 
 
+
+
+;; ---8<----8<----8<----8<----8<----8<----8<----8<----8<----8<----8<----8<----
+;; TODO - Clean up
+;; ---8<----8<----8<----8<----8<----8<----8<----8<----8<----8<----8<----8<----
+(defun tc/get-buffer-content ()
+  "return buffer or region content."
+  (if (region-active-p)
+      (buffer-substring-no-properties (region-beginning) (region-end))
+    (buffer-substring-no-properties 1 (buffer-size))
+    )
+  )
+
+(when (file-directory-p "/srv/github.com/TristanCacqueray/emacs-toolbox")
+  (add-to-list 'load-path "/srv/github.com/TristanCacqueray/emacs-toolbox")
+  ;; Update schedule events when the agenda is displayed
+  (require 'org-next-event)
+  (add-hook 'org-agenda-mode-hook 'org-next-event-render)
+  (require 'org-report)
+  ;; From anywhere, f6 shows the daily report
+  ;; (define-key global-map (kbd "<f6>") 'org-report-daily-show)
+
+  ;; In the daily report calendar view, f6 format the report
+  ;; (define-key org-agenda-mode-map (kbd "<f6>") 'org-report-daily)
+
+  )
+
+(defun advice-unadvice (sym)
+  "Remove all advices from symbol SYM."
+  (interactive "aFunction symbol: ")
+  (advice-mapc (lambda (advice _props) (advice-remove sym advice)) sym))
 
 (defun xah-get-bounds-of-block ()
   "Return the boundary (START . END) of current block.
@@ -340,30 +353,5 @@ Version: 2020-06-26 2023-09-19 2023-10-29"
   (elfeed-org)
   (setq rmh-elfeed-org-files (list "/srv/github.com/TristanCacqueray/midirus.com/content/zettle/feeds.org")))
 
-
-;; From: https://stackoverflow.com/a/70131908
-;; With auto saved disabled
-(defun org-archive-done-tasks ()
-  "Archive all tasks marked DONE in the file."
-  (interactive)
-  ;; Disable auto save
-  (setq org-archive-subtree-save-file-p nil)
-  (unwind-protect
-      (mapc (lambda(entry)
-              (goto-char entry)
-              (org-archive-subtree))
-            ;; process the entry in reverse to avoid changes in positioning
-            (reverse (org-map-entries (lambda () (point)) "TODO=\"DONE\"" 'file)))
-      (setq org-archive-subtree-save-file-p t)))
-
-(blink-cursor-mode -1)
-
-(use-package org-modern
-  :after org
-  :custom
-  (org-modern-todo-faces
-    (quote (("NEXT" :foreground "blue" :weight bold :background "orange"))))
-  :config
-  (global-org-modern-mode))
 
 (provide 'local-init)

@@ -194,6 +194,9 @@
 ;;; Core packages and hooks
 ;;;
 
+;; Steady cursor
+(blink-cursor-mode -1)
+
 ;; Save the cursors locations
 (save-place-mode)
 
