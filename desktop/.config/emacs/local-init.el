@@ -94,14 +94,14 @@
 (setq org-capture-templates
       '(
         ("t" "todo" entry (file tc/inbox)
-         "* TODO %?\n/Entered on/ %U\n")
+         "* TODO %?\n/Entered on/ %U  %a")
         ("d" "done" entry (file tc/inbox)
          "* DONE %?\nCLOSED: %U\n")
         ("j" "Journal" entry (file+olp+datetree tc/journal)
          "* %?\n")
         ))
 
-(define-key global-map (kbd "<f5>") (lambda () (interactive) (org-capture nil "t")))
+(define-key global-map (kbd "<f6>") (lambda () (interactive) (org-capture nil "t")))
 
 (defun tc/org-capture-done ()
   (interactive)
