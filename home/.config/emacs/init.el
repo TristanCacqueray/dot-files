@@ -414,7 +414,11 @@
   ;; Ensure multi-hop stays verbatim, e.g. /ssh:user@host|sudo:host:/path
   ;; With this, the bookmark will be reduced to =/ssh:root@host/=, which doesn't work
   ;; Q: is this worth reporting/fixing upstream?
-  (tramp-show-ad-hoc-proxies t))
+  (tramp-show-ad-hoc-proxies t)
+
+  ;; Use the regular ~/.ssh/config settings
+  (tramp-use-ssh-controlmaster-options nil)
+  )
 
 ;; Better replace with visual feedback
 (use-package anzu
@@ -705,7 +709,7 @@
   "Return the latest file in PATH."
   (car (directory-files path 'full nil #'file-newer-than-file-p)))
 
-(defun copy-screenshot-markdown (name)
+(defun insert-screenshot-markdown (name)
   "Move the latest screenshot and insert markdown link with NAME."
   (interactive "Mname: ")
   (let* ((infile (expand-file-name (get-newest-file-from-dir "~/Pictures/Screenshots")))
