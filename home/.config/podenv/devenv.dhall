@@ -8,7 +8,7 @@ in  Podenv.Application::{
     , namespace = Some "host"
     , runtime = Hub.nix.useInstallables [ "github:podenv/devenv" ]
     , command = [ "nix-shell", "--arg", "withX", "true", "--command", "emacs" ]
-    , environ = [ "EDITOR=emacsclient" ]
+    , environ = [ "EDITOR=emacsclient", "SHELL=/bin/bash" ]
     , volumes = [ "~/src", "~/.config/devenv:~" ]
     , capabilities = Podenv.Capabilities::{
       , terminal = True
