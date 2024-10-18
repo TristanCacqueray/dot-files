@@ -182,7 +182,9 @@
 (when (file-exists-p custom-file) (load custom-file))
 
 ;; Default to utf-8 unix encoding
-(prefer-coding-system 'utf-8-unix)
+(set-default-coding-systems 'utf-8)
+(setenv "LC_ALL" "C.UTF-8")
+
 ;; y/n for  answering yes/no questions
 (fset 'yes-or-no-p 'y-or-n-p)
 
