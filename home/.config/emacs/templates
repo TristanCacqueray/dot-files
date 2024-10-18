@@ -18,6 +18,11 @@ markdown-mode
 (kbd "<kbd>" r "</kbd>")
 (code "```" r n "```")
 (player-yt ":::{.flex .items-center .justify-center}" n "<iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/" r "\" title=\"YouTube video player\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture\" allowfullscreen></iframe>" n ":::")
+
+org-mode
+
+(code "#+begin_src" n r n "#+end_src")
+
 ;; Local Variables:
 ;; mode: lisp-data
 ;; outline-regexp: "[a-z]"
