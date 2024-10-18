@@ -104,7 +104,7 @@
   "Capture a journal item."
   (interactive)
   (org-capture nil "j"))
-(define-key global-map (kbd "C-c j") 'tc/org-capture-journal)
+(define-key global-map (kbd "<f9>") 'tc/org-capture-journal)
 
 
 ;; example agenda config
