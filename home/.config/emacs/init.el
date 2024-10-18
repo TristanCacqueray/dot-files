@@ -433,8 +433,22 @@
   (("M-g d" . avy-goto-char-timer)
    ("M-g l" . avy-goto-line)))
 
-;; Auto formater, TODO: check if reformat works better?
+;; Use format-all for ad-hoc setup
 (use-package format-all)
+
+;; Use reformatter to setup automatic fmt-on-save, like with fourmolu
+(use-package reformatter
+  :config
+  (defun reformatter-disable ()
+    "Helper to remove any auto formatter."
+    (interactive)
+    (mapc (lambda (m)
+            (message "removing %s" (symbol-name m))
+            (funcall m -1))
+          (seq-filter
+           (lambda (m) (string-suffix-p "-format-on-save-mode" (symbol-name m)))
+           local-minor-modes)))
+  )
 
 ;; Ensure unique buffer names
 (progn
@@ -533,8 +547,13 @@
   :config
   ;; ensure run-haskell uses the simplest ghci subprocess
   (setq-default haskell-process-type 'auto)
-  ;; (add-hook 'haskell-mode-hook 'ormolu-format-on-save-mode)
   (add-hook 'haskell-mode-hook 'haskell-auto-insert-module-template)
+  ;; auto format with fourmolu by default
+  (reformatter-define fourmolu-format
+    :program "fourmolu"
+    :args `("--stdin-input-file" ,buffer-file-name))
+  (add-hook 'haskell-mode-hook 'fourmolu-format-on-save-mode)
+
   ;; configure interactive mode
   (require 'haskell-interactive-mode)
   (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
@@ -570,7 +589,12 @@
 (add-to-list 'auto-mode-alist '("\\.mjs\\'" . javascript-mode))
 
 ;; For .nix file
-(use-package nix-mode)
+(use-package nix-mode
+  :config
+  ;; auto format with nixfmt by default
+  (reformatter-define nixfmt-format
+    :program "nixfmt")
+  (add-hook 'nix-mode-hook 'nixfmt-format-on-save-mode))
 
 (use-package org
   :config
