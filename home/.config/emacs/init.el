@@ -397,7 +397,18 @@
    ("M-l" . 'consult-git-grep)
    ("M-y" . 'consult-yank-pop)  ;; Paste by selecting the kill-ring
    ("M-s" . 'consult-line)      ;; Search current buffer, like swiper
-   ))
+   )
+  :config
+  ;; Disable preview of remote file
+  ;; https://github.com/minad/consult/discussions/969#discussioncomment-10871508
+  (defun buffer-remote-p (buf)
+    "Return t when BUF is remote."
+    ;; (message "HERE [%s - %s]" buf (buffer-file-name buf))
+    (if-let ((fp (buffer-file-name buf)))
+        (file-remote-p fp)
+      nil))
+  (setq consult-preview-excluded-buffers 'buffer-remote-p)
+  )
 
 ;; Embark let you export a completion list with 'E' amongs other thing.
 ;; When running git-grep, the export creates a special buffer to browse the results.
