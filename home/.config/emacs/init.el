@@ -172,6 +172,9 @@
   :custom
   (dired-listing-switches "-alh"))
 
+;; Do not outright delete files.
+(setq delete-by-moving-to-trash t)
+
 ;; Do not save backup in projects, keep them in home
 (let ((save-dir (concat user-emacs-directory "saves/")))
   (setq
