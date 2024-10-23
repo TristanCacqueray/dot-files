@@ -453,6 +453,13 @@
 ;; Use reformatter to setup automatic fmt-on-save, like with fourmolu
 (use-package reformatter
   :config
+  ;; use deno-format-html for .tpl file
+  (reformatter-define deno-format-html
+    :program "deno"
+    :args `("fmt" "--ext" "html" "-"))
+  (reformatter-define deno-format
+    :program "deno"
+    :args `("fmt" "--ext" ,(if buffer-file-name (file-name-extension buffer-file-name) "js") "-"))
   (defun reformatter-disable ()
     "Helper to remove any auto formatter."
     (interactive)
