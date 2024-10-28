@@ -409,7 +409,9 @@
     ;; (message "HERE [%s - %s]" buf (buffer-file-name buf))
     (if-let ((fp (buffer-file-name buf)))
         (file-remote-p fp)
-      nil))
+      (if (string= (buffer-name buf) "*notmuch-hello*")
+          t
+        nil)))
   (setq consult-preview-excluded-buffers 'buffer-remote-p)
   )
 
