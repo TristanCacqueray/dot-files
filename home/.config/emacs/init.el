@@ -696,8 +696,11 @@
   (add-hook 'python-mode-hook 'format-all-mode)
   (setq python-shell-interpreter "python3"))
 
-(use-package yaml-mode)
-
+(use-package yaml-mode
+  :config
+  (reformatter-define yamlfmt-format
+    :program "yamlfmt"
+    :args '("-")))
 
 ;;;
 ;;; Helpers, to be moved to emacs-toolbox
