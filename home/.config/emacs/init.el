@@ -881,6 +881,14 @@ typical word processor."
   ;; Otherwise for terminal, just load a default theme
   (load-theme 'tango-dark t))
 
+;; TODO: call this automatically
+(defun tmux-attach-env-update ()
+  "Update ssh env when attaching to previous tmux."
+  (interactive)
+  (let ((sshPath (substring (shell-command-to-string "ls -t /tmp/ssh-*/agent.* | head -n 1") 0 -1)))
+    (setenv "SSH_AUTH_SOCK" sshPath))
+  (let ((krbPath (substring (shell-command-to-string (format "ls -t $(find /tmp/krb5* -uid %s) | head -n 1" (user-uid))) 0 -1)))
+    (setenv "KRB5CCNAME" krbPath)))
 
 ;;;
 ;;; Key bindings and extra customizations
