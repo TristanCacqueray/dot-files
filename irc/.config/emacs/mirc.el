@@ -5,14 +5,18 @@
 
 (use-package erc
   :config
-  (setq erc-server "irc.libera.chat"
-        erc-nick "tristanC"
-        erc-user-full-name "Tristan"
-        erc-track-shorten-start 8
-        erc-kill-buffer-on-part t
-        erc-use-auth-source-for-nickserv-password t
-        erc-auto-query 'bury)
-  )
+  ;; Setup auth-source
+  (setq erc-use-auth-source-for-nickserv-password t)
+  ;; Disable password prompts
+  (setq erc-prompt-for-nickserv-password nil)
+  (setq erc-prompt-for-password nil))
+
+(defun erc-libera ()
+  (interactive)
+  (erc-tls :server "irc.libera.chat"
+           :port 6697
+           :nick   "tristanC"
+           :full-name "Tristan"))
 
 (provide 'mirc)
 
