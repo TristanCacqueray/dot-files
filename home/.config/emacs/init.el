@@ -328,11 +328,17 @@
 
 ;; access external clipboard, works with wayland
 (use-package simpleclip
+  :if (display-graphic-p)
   :config
   ;; C-ins / M-ins to copy/paste from the system clipboard
   (global-set-key (kbd "C-<insert>") 'simpleclip-copy)
   (global-set-key (kbd "M-<insert>") 'simpleclip-paste)
   (simpleclip-mode))
+
+(use-package clipetty
+  :if (not (display-graphic-p))
+  :config
+  (global-set-key (kbd "C-<insert>") 'clipetty-kill-ring-save))
 
 ;; in buffer completion
 (use-package corfu
