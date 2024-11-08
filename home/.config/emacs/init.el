@@ -335,10 +335,23 @@
   (global-set-key (kbd "M-<insert>") 'simpleclip-paste)
   (simpleclip-mode))
 
-(use-package clipetty
-  :if (not (display-graphic-p))
-  :config
-  (global-set-key (kbd "C-<insert>") 'clipetty-kill-ring-save))
+;; Provide access to the Wayland clipboard.
+;; Install the tool by running `dnf install -y wl-clipboard'
+(defun wl-copy ()
+  "Copy the current region to Wayland clipboard with wl-copy."
+  (interactive)
+  (when (use-region-p)
+    (let ((p (make-process :name "wl-copy"
+                           :command '("wl-copy")
+                           :connection-type 'pipe))
+          (s (buffer-substring-no-properties (region-beginning) (region-end))))
+      (message "go %s" s)
+      (process-send-string p s)
+      (process-send-eof p))))
+
+;; Use C-ins to copy into Wayland clipboard from an Emacs TTY
+(unless (display-graphic-p)
+  (global-set-key (kbd "C-<insert>") 'wl-copy))
 
 ;; in buffer completion
 (use-package corfu
