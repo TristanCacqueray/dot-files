@@ -323,6 +323,9 @@
 ;; git porcelaine
 (use-package magit
   :config
+  ;; Add option to create a GitLab MR
+  (transient-append-suffix 'magit-push "-F"
+    '(1 "-m" "Create Merge Request" "--push-option=merge_request.create"))
   (global-set-key (kbd "C-x g") 'magit-status)
   (magit-auto-revert-mode))
 
