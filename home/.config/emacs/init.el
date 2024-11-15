@@ -414,16 +414,21 @@
 
 ;; Consulting completing-read, better emacs command
 (use-package consult
-  ;; :custom
-  ;; Disable preview. TODO: disable only for consult-buffers
-  ;; (consult-preview-key nil)
+  :custom
+  ;; Disable preview globally.
+  (consult-preview-key nil)
   :bind
   (("C-x b" . 'consult-buffer)  ;; Switch buffer, including recentf and bookmarks
-   ("M-l" . 'consult-git-grep)
+   ("M-l" . 'my-git-grep)
    ("M-y" . 'consult-yank-pop)  ;; Paste by selecting the kill-ring
    ("M-s" . 'consult-line)      ;; Search current buffer, like swiper
    )
   :config
+  (defun my-git-grep ()
+    "Call consult-git-grep by forcing the match preview"
+    (interactive)
+    (let ((consult-preview-key 'any))
+      (consult-git-grep)))
   ;; Disable preview of remote file
   ;; https://github.com/minad/consult/discussions/969#discussioncomment-10871508
   (defun buffer-remote-p (buf)
