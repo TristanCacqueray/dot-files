@@ -354,4 +354,15 @@ Version: 2020-06-26 2023-09-19 2023-10-29"
   (setq rmh-elfeed-org-files (list "/srv/github.com/TristanCacqueray/midirus.com/content/zettle/feeds.org")))
 
 
+(defun unzip-to-dir ()
+  "Extract zip under Dired cursor to a directory."
+  (interactive)
+  (let* ((fp (dired-get-filename))
+         (ext (file-name-extension fp))
+         (dname (substring fp 0 -4)))
+    (when (not (string= ext "zip"))
+      (error "Not a zip file"))
+    (make-directory dname)
+    (start-process "unzip" "*unzip-dir*" "unzip" fp "-d" dname)))
+
 (provide 'local-init)
