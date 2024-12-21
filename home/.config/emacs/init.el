@@ -266,7 +266,7 @@
 (add-hook 'prog-mode-hook 'flymake-mode)
 
 ;; enable subword
-(add-hook 'prog-mode-hook 'subword-mode)
+;; (add-hook 'prog-mode-hook 'subword-mode)
 
 ;; ignore code block in spellcheck
 (add-to-list 'ispell-skip-region-alist '("^```" . "```$"))
