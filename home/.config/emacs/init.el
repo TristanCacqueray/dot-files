@@ -955,10 +955,11 @@ typical word processor."
 
 (global-set-key (kbd "<f1>") (lambda () (interactive) (project-shell-history)))
 (global-set-key (kbd "<f2>") (lambda () (interactive) (project-shell-history "<2>")))
-;; (global-set-key (kbd "<f3>") 'flymake-goto-next-error)
+(global-set-key (kbd "<f3>") 'flymake-goto-next-error)
+(global-set-key (kbd "<f4>") 'eglot-code-actions)
 
 (global-set-key (kbd "<f5>") 'project-compile)
-(global-set-key (kbd "<f3>") 'next-error)
+;; (global-set-key (kbd "<f3>") 'next-error)
 (global-set-key (kbd "S-<f5>") 'project-recompile)
 
 
