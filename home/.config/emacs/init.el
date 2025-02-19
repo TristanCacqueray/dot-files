@@ -158,6 +158,9 @@
 
  ;; Make apropos commands search more extensively.
  apropos-do-all t
+
+ ;; Ignore case when completing file names
+ completion-ignore-case t
  )
 
 ;; dired
