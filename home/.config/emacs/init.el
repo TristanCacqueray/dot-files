@@ -923,6 +923,8 @@ typical word processor."
 
 ;; load my toolbox
 (let ((my-toolbox "~/src/github.com/TristanCacqueray/emacs-toolbox/"))
+  ;; todo: remove that dependencies in project-shell
+  (use-package f)
   (require 'git-clone (concat my-toolbox "git-clone.el") t)
   (require 'project-shell (concat my-toolbox "project-shell.el") t))
 
