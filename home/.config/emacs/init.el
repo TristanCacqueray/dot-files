@@ -70,6 +70,9 @@
   (tool-bar-mode 0))
 (menu-bar-mode 0)
 
+;; Goodbye GNOME title bar
+(setq default-frame-alist '((undecorated . t)))
+
 ;; Adjust the defaults to taste
 (setq-default
  ;; Start fullscreen, no about
